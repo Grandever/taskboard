@@ -1,12 +1,13 @@
-import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
+import { Component, OnInit  } from '@angular/core';
+import { TitleCasePipe} from '@angular/common';
+import {TaskBoard} from './components/task-board/task-board';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet],
+  imports: [TitleCasePipe, TaskBoard],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
-export class App {
-  protected title = 'taskboard';
+export class App{
+
 }
