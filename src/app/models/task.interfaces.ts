@@ -4,7 +4,7 @@ export interface Task {
   description?: string;
   status: 'todo' | 'in_progress' | 'code_review' | 'test_ready' | 'finished';
   priority: 'low' | 'medium' | 'high' | 'urgent';
-  assignee?: string;
+  assignee?: string; // user id
   tags?: string[];
   due_date?: string;
   created_at: string;
@@ -25,4 +25,12 @@ export interface AppSettings {
     due_date_range?: { from: string; to: string };
     tags?: string[];
   };
+}
+
+export interface User {
+  id: string;
+  firstName: string;
+  lastName: string;
+  username: string;
+  avatarUrl: string;
 }

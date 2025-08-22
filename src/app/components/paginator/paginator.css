@@ -1,0 +1,125 @@
+/* Custom paginator styles */
+.paginator-container {
+  display: flex;
+  align-items: center;
+  padding: 20px 24px;
+  background-color: #f8f9fa;
+  border-top: 1px solid #e9ecef;
+  border-radius: 0 0 12px 12px;
+  min-height: 70px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.paginator-info {
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.paginator-controls {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.show-per-page {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.show-per-page select {
+  width: 60px;
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 0.875rem;
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.show-per-page select:focus {
+  border-color: #28a745;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+.page-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #495057;
+}
+
+.page-input {
+  border: 1px solid #ced4da;
+  border-radius: 6px;
+  padding: 6px 8px;
+  text-align: center;
+  background-color: white;
+  transition: border-color 0.2s ease;
+}
+
+.page-input:focus {
+  border-color: #28a745;
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(40, 167, 69, 0.25);
+}
+
+/* Custom pagination styles */
+.custom-pagination {
+  margin: 0;
+  gap: 8px;
+  display: flex;
+  align-items: center;
+}
+
+.custom-pagination .page-item {
+  margin: 0;
+}
+
+.custom-pagination .page-link {
+  border: none;
+  color: #28a745;
+  background-color: transparent;
+  padding: 8px 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.custom-pagination .page-link:hover {
+  color: #20c997;
+  transform: scale(1.1);
+}
+
+.custom-pagination .page-item.disabled .page-link {
+  color: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.custom-pagination .page-item.disabled .page-link:hover {
+  transform: none;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .paginator-container {
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .paginator-controls {
+    justify-content: center;
+  }
+  
+  .custom-pagination {
+    justify-content: center;
+  }
+}

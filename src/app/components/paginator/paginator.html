@@ -1,0 +1,63 @@
+<!-- paginator.component.html -->
+<div class="paginator-container">
+  <div class="paginator-info">
+    <strong>Total: {{totalItems}}</strong>
+  </div>
+  
+  <div class="paginator-controls">
+    <div class="show-per-page">
+      <span>Show: </span>
+      <select class="form-select form-select-sm" [(ngModel)]="itemsPerPage" (change)="onPageSizeChange()">
+        <option value="5">5</option>
+        <option value="10">10</option>
+        <option value="20">20</option>
+        <option value="50">50</option>
+      </select>
+    </div>
+    
+    <div class="page-info">
+      <span>Page: </span>
+      <input type="number" class="form-control form-select-sm page-input" 
+             [(ngModel)]="currentPage" 
+             (change)="onPageChange()"
+             min="1" 
+             [max]="totalPages"
+             style="width: 60px;">
+      <span>of <strong>{{totalPages}}</strong></span>
+    </div>
+  </div>
+  
+  <nav aria-label="Page navigation">
+    <ul class="pagination custom-pagination">
+      <!-- Birinchi sahifaga o'tish -->
+     <!-- Birinchi sahifa -->
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="goToFirst()" aria-label="First">
+        <i class="bi bi-chevron-double-left"></i>
+      </a>
+    </li>
+
+    <!-- Oldingi sahifa -->
+    <li class="page-item" [class.disabled]="currentPage === 1">
+      <a class="page-link" (click)="goToPrev()" aria-label="Previous">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+
+    <!-- Keyingi sahifa -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <a class="page-link" (click)="goToNext()" aria-label="Next">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+
+    <!-- Oxirgi sahifa -->
+    <li class="page-item" [class.disabled]="currentPage === totalPages">
+      <a class="page-link" (click)="goToLast()" aria-label="Last">
+        <i class="bi bi-chevron-double-right"></i>
+      </a>
+    </li>
+
+    </ul>
+  </nav>
+</div>

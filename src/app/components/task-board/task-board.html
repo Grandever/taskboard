@@ -3,7 +3,26 @@
   (taskAdded)="onTaskAdded($event)"
   (taskUpdated)="onTaskUpdated($event)"
 ></task-form>
-<div class="board-grid">
+
+<!-- Skeleton loading for board -->
+<div *ngIf="loading" class="d-flex position-relative" style="gap: 16px;">
+  <div class="board-grid" style="width: 100%">
+    <div class="column highlighted" *ngFor="let i of [1,2,3,4,5]">
+      <div class="column-header">
+        <span><i class="fas fa-clipboard-list me-2"></i>Loading...</span>
+        <span class="task-count">0</span>
+      </div>
+      <div class="task-card skeleton-task" *ngFor="let j of [1,2,3]">
+        <div class="skeleton-text" style="height: 1.5rem; margin-bottom: 0.5rem;"></div>
+        <div class="skeleton-text" style="height: 1rem; width: 60%;"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Actual board -->
+<div *ngIf="!loading" class="d-flex position-relative" style="gap: 16px;">
+  <div class="board-grid" [style.width]="detailOpen ? '50%' : '100%'">
   <!-- Loop through Columns -->
   <div
     class="column highlighted" *ngFor="let column of columns"
@@ -19,6 +38,7 @@
     <div
       *ngFor="let task of column.tasks"
       class="task-card"
+      [ngClass]="getPriorityClass(task.priority)"
       draggable="true"
       (dragstart)="onDragStart(task)"
       (dragend)="onDragEnd()"
@@ -26,9 +46,11 @@
       [routerLink]="['/task', task.id]"
       style="border: #00b8d9 1px solid;"
       (click)="logTaskClick(task)"
-
     >
-      <div class="task-title">{{ task.title }}</div>
+      <div class="task-title d-flex align-items-center justify-content-between">
+        <span class="me-2">{{ task.title }}</span>
+        <img *ngIf="task.assignee" [src]="'https://api.dicebear.com/7.x/identicon/svg?seed=' + task.assignee" width="20" height="20" class="rounded-circle" alt="assignee" />
+      </div>
       <div class="task-meta">
         <span>Priority: {{ task.priority | titlecase }}</span>
         <span>Due: {{ task.due_date || 'None' }}</span>
@@ -37,7 +59,13 @@
 
     <!-- Empty State -->
     <div *ngIf="column.tasks.length === 0" class="empty-placeholder">
-      <i>No tasks available</i>
+      <i>No tasks available in this column</i>
     </div>
   </div>
+  </div>
+  <div *ngIf="detailOpen && selectedTask" style="width: 50%; min-width: 360px; position: relative; z-index: 2;">
+    <app-task-detail [taskInput]="selectedTask" (close)="detailOpen = false" (prev)="onPrev()" (next)="onNext()"></app-task-detail>
+  </div>
+  <div *ngIf="detailOpen" class="position-fixed top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.2); z-index:1;" (click)="detailOpen=false"></div>
 </div>
+

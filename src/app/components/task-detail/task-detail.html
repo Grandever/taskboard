@@ -1,11 +1,24 @@
 <div class="task-detail-container" *ngIf="taskDetails">
-  <h2>Task Details</h2>
+  <div class="detail-header d-flex align-items-center justify-content-between sticky-top pb-2 mb-3" style="background:#f9f9f9; top:0; z-index:1;">
+    <h2 class="m-0">{{ taskDetails.title }}</h2>
+    <div class="btn-group">
+      <button class="btn btn-sm btn-outline-secondary" (click)="prev.emit()">Prev</button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="next.emit()">Next</button>
+      <button class="btn btn-sm btn-outline-secondary" (click)="onClose()">Close</button>
+    </div>
+  </div>
   <p><strong>ID:</strong> {{ taskDetails.id }}</p>
   <p><strong>Title:</strong> {{ taskDetails.title }}</p>
   <p><strong>Description:</strong> {{ taskDetails.description || 'No description available.' }}</p>
   <p><strong>Priority:</strong> {{ taskDetails.priority }}</p>
   <p><strong>Due Date:</strong> {{ taskDetails.due_date || 'None' }}</p>
-  <p><strong>Assignee:</strong> {{ taskDetails.assignee || 'Unassigned' }}</p>
+  <p><strong>Assignee:</strong>
+    <ng-container *ngIf="assigneeUser; else noAssignee">
+      <img [src]="assigneeUser?.avatarUrl" (error)="onAvatarError($event)" width="24" height="24" class="rounded-circle me-2" alt="avatar" />
+      {{ assigneeUser?.firstName }} {{ assigneeUser?.lastName }} ({{ assigneeUser?.username }})
+    </ng-container>
+    <ng-template #noAssignee>Unassigned</ng-template>
+  </p>
   <p><strong>Create at:</strong> {{ taskDetails.created_at || 'Unassigned' }}</p>
   <p><strong>Update at:</strong> {{ taskDetails.updated_at || 'Unassigned' }}</p>
   <p><strong>Status:</strong> {{ taskDetails.status }}</p>
@@ -16,7 +29,7 @@
     <button class="btn btn-danger" (click)="deleteTask()">Delete</button>
   </div>
 
-  <button class="btn btn-primary mt-3" routerLink="/board">Back to Board</button>
+  <button class="btn btn-outline-secondary mt-3" (click)="onClose()">Close</button>
 </div>
 
 <task-form

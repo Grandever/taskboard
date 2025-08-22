@@ -1,8 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {NgForOf, NgIf, TitleCasePipe} from '@angular/common';
+import {NgClass, NgForOf, NgIf, TitleCasePipe} from '@angular/common';
 import {TaskForm} from '../task-form/task-form';
-import {Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { Task } from '../../models/task.interfaces'; // Qo'shildi
+import { TaskDetail } from '../task-detail/task-detail';
+import { SkeletonComponent } from '../skeleton/skeleton';
 
 
 
@@ -20,8 +22,11 @@ interface Column {
     TitleCasePipe,
     NgForOf,
     NgIf,
+    NgClass,
     TaskForm,
-    RouterLink
+    RouterLink,
+    TaskDetail,
+    SkeletonComponent
   ],
   styleUrls: ['./task-board.css']
 })
@@ -29,11 +34,15 @@ export class TaskBoard implements OnInit {
   columns: Column[] = []; // Dynamically constructed columns
   tasks: Task[] = []; // Flat list of tasks
   draggedTask: Task | null = null;
-selectedTask: Task | null = null;
+  selectedTask: Task | null = null;
+  detailOpen: boolean = false;
+  loading: boolean = true;
 
   private router= inject(Router)
+  private route = inject(ActivatedRoute)
 
   ngOnInit(): void {
+    this.loading = true;
     // Load tasks from LocalStorage
     const storedTasks = localStorage.getItem('taskboard/v1/tasks');
     if (storedTasks) {
@@ -42,6 +51,26 @@ selectedTask: Task | null = null;
 
     // Dynamically build columns based on grouped tasks
     this.generateColumns();
+    // Add delay to show skeleton for 500ms
+    setTimeout(() => {
+      this.loading = false;
+    }, 500);
+
+    // react to title query param for filtering
+    this.route.queryParamMap.subscribe((p) => {
+      this.loading = true;
+      const title = (p.get('title') || '').toLowerCase();
+      const all = localStorage.getItem('taskboard/v1/tasks');
+      this.tasks = all ? JSON.parse(all) : [];
+      if (title) {
+        this.tasks = this.tasks.filter(t => (t.title || '').toLowerCase().includes(title));
+      }
+      this.generateColumns();
+      // Add delay to show skeleton for 500ms
+      setTimeout(() => {
+        this.loading = false;
+      }, 500);
+    });
   }
 
   // Group tasks by status and generate columns dynamically
@@ -73,7 +102,24 @@ selectedTask: Task | null = null;
 
   logTaskClick(task: Task): void {
     console.log('Task clicked:', task);
-    this.router.navigate(['/task', task.id]); // Navigate to the task detail page
+    this.selectedTask = task;
+    this.detailOpen = true;
+  }
+
+  onPrev() {
+    if (!this.selectedTask) return;
+    const flat = this.columns.flatMap(c => c.tasks);
+    const idx = flat.findIndex(t => t.id === this.selectedTask!.id);
+    const prev = idx > 0 ? flat[idx - 1] : flat[flat.length - 1];
+    this.selectedTask = prev;
+  }
+
+  onNext() {
+    if (!this.selectedTask) return;
+    const flat = this.columns.flatMap(c => c.tasks);
+    const idx = flat.findIndex(t => t.id === this.selectedTask!.id);
+    const next = idx < flat.length - 1 ? flat[idx + 1] : flat[0];
+    this.selectedTask = next;
   }
 
 
@@ -131,6 +177,19 @@ selectedTask: Task | null = null;
       task.updated_at = new Date().toISOString();
       this.saveTasksToLocalStorage();
       this.generateColumns(); // Update displayed columns
+    }
+  }
+
+  getPriorityClass(priority: Task['priority']): string {
+    switch (priority) {
+      case 'urgent':
+      case 'high':
+        return 'high';
+      case 'medium':
+        return 'medium';
+      case 'low':
+      default:
+        return 'low';
     }
   }
 
