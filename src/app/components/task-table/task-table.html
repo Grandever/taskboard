@@ -1,0 +1,166 @@
+<!-- task-table.html -->
+<div class="card p-3">
+  <!-- Skeleton loading -->
+  <app-skeleton 
+    *ngIf="loading" 
+    [rows]="5"
+    [columns]="[
+      { width: '20%' },
+      { width: '15%' },
+      { width: '15%' },
+      { width: '25%' },
+      { width: '25%' }
+    ]">
+  </app-skeleton>
+
+     <!-- Actual table -->
+   <table *ngIf="!loading" class="table table-bordered table-striped custom-table">
+     <thead>
+     <tr class="table-header">
+              <th style="width:20%; cursor:pointer" (click)="toggleSort('title')" title="Sort by Title">
+         <div class="header-content">
+           <i class="fas fa-home me-2"></i>
+           <span class="header-text">TITLE</span>
+           <div class="sort-icons">
+             <ng-container *ngIf="sortBy === 'title'; else titleNeutral">
+               <svg *ngIf="sortDir === 'asc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10l5-6 5 6H3z" fill="currentColor"/></svg>
+               <svg *ngIf="sortDir === 'desc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 6 5-6H3z" fill="currentColor"/></svg>
+             </ng-container>
+             <ng-template #titleNeutral>
+               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3l3 3H5l3-3zm0 10l-3-3h6l-3 3z" fill="currentColor"/></svg>
+             </ng-template>
+           </div>
+         </div>
+       </th>
+              <th style="width:15%; cursor:pointer" (click)="toggleSort('status')" title="Sort by Status">
+         <div class="header-content">
+           <i class="fas fa-building me-2"></i>
+           <span class="header-text">STATUS</span>
+           <div class="sort-icons">
+             <ng-container *ngIf="sortBy === 'status'; else statusNeutral">
+               <svg *ngIf="sortDir === 'asc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10l5-6 5 6H3z" fill="currentColor"/></svg>
+               <svg *ngIf="sortDir === 'desc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 6 5-6H3z" fill="currentColor"/></svg>
+             </ng-container>
+             <ng-template #statusNeutral>
+               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3l3 3H5l3-3zm0 10l-3-3h6l-3 3z" fill="currentColor"/></svg>
+             </ng-template>
+           </div>
+         </div>
+       </th>
+              <th style="width:15%; cursor:pointer" (click)="toggleSort('priority')" title="Sort by Priority">
+         <div class="header-content">
+           <i class="fas fa-eye me-2"></i>
+           <span class="header-text">PRIORITY</span>
+           <div class="sort-icons">
+             <ng-container *ngIf="sortBy === 'priority'; else priorityNeutral">
+               <svg *ngIf="sortDir === 'asc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10l5-6 5 6H3z" fill="currentColor"/></svg>
+               <svg *ngIf="sortDir === 'desc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 6 5-6H3z" fill="currentColor"/></svg>
+             </ng-container>
+             <ng-template #priorityNeutral>
+               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3l3 3H5l3-3zm0 10l-3-3h6l-3 3z" fill="currentColor"/></svg>
+             </ng-template>
+           </div>
+         </div>
+       </th>
+              <th style="width:25%; cursor:pointer" (click)="toggleSort('updated_at')" title="Sort by Updated At">
+         <div class="header-content">
+           <i class="fas fa-envelope me-2"></i>
+           <span class="header-text">UPDATED AT</span>
+           <div class="sort-icons">
+             <ng-container *ngIf="sortBy === 'updated_at'; else updatedNeutral">
+               <svg *ngIf="sortDir === 'asc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 10l5-6 5 6H3z" fill="currentColor"/></svg>
+               <svg *ngIf="sortDir === 'desc'" width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 6l5 6 5-6H3z" fill="currentColor"/></svg>
+             </ng-container>
+             <ng-template #updatedNeutral>
+               <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><path d="M8 3l3 3H5l3-3zm0 10l-3-3h6l-3 3z" fill="currentColor"/></svg>
+             </ng-template>
+           </div>
+         </div>
+       </th>
+              <th style="width:25%">
+         <div class="header-content">
+           <i class="fas fa-map-pin me-2"></i>
+           <span class="header-text">ASSIGNEE</span>
+         </div>
+       </th>
+     </tr>
+     <tr class="filter-row">
+       <th>
+         <div class="filter-container">
+           <input class="form-control form-control-sm filter-input" placeholder="Search title" [(ngModel)]="filters.title" (ngModelChange)="onFiltersChanged()" />
+           <i class="fas fa-filter filter-icon"></i>
+         </div>
+       </th>
+       <th>
+         <div class="filter-container">
+           <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.status" (ngModelChange)="onFiltersChanged()">
+             <option [ngValue]="undefined">All</option>
+             <option *ngFor="let s of statusOptions" [ngValue]="s">{{ s }}</option>
+           </select>
+           <i class="fas fa-chevron-down filter-icon"></i>
+         </div>
+       </th>
+       <th>
+         <div class="filter-container">
+           <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.priority" (ngModelChange)="onFiltersChanged()">
+             <option [ngValue]="undefined">All</option>
+             <option *ngFor="let p of priorityOptions" [ngValue]="p">{{ p }}</option>
+           </select>
+           <i class="fas fa-chevron-down filter-icon"></i>
+         </div>
+       </th>
+       <th>
+         <div class="filter-container">
+           <input class="form-control form-control-sm filter-input" placeholder="Search updated" [(ngModel)]="filters.updated_at" (ngModelChange)="onFiltersChanged()" />
+           <i class="fas fa-filter filter-icon"></i>
+         </div>
+       </th>
+       <th>
+         <div class="filter-container">
+           <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.assignee" (ngModelChange)="onFiltersChanged()">
+             <option [ngValue]="undefined">All</option>
+             <option *ngFor="let u of users" [ngValue]="u.id">{{ u.firstName }} {{ u.lastName }}</option>
+           </select>
+           <i class="fas fa-chevron-down filter-icon"></i>
+         </div>
+       </th>
+     </tr>
+     </thead>
+    <tbody>
+    <tr *ngFor="let task of pagedTasks">
+      <td>{{ task.title }}</td>
+      <td>{{ task.status | statusLabel }}</td>
+      <td>
+        <span [ngClass]="getPriorityBadgeClass(task.priority)">{{ task.priority }}</span>
+      </td>
+      <td>{{ task.updated_at | date:'yyyy-MM-dd HH:mm' }}</td>
+      <td>
+        <div class="d-flex align-items-center">
+                                           <ng-container *ngIf="getAssignee(task) as a; else unassignedTpl">
+                           <span>j_{{ a.username.toLowerCase() }}</span>
+            </ng-container>
+          <ng-template #unassignedTpl>
+            <span class="text-muted">Unassigned</span>
+          </ng-template>
+        </div>
+      </td>
+    </tr>
+   
+    </tbody>
+     </table>
+      <ng-container *ngIf="!loading && pagedTasks.length === 0">
+     <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5" style="min-height: 180px;">
+       <svg width="32" height="32" viewBox="0 0 24 24" aria-hidden="true" class="mb-3"><path fill="currentColor" d="M10 18h4v-2h-4v2Zm-7 3V5q0-.825.588-1.412T5 3h14q.825 0 1.413.588T21 5v16l-3-3H5q-.825 0-1.412-.587T3 18Zm2-3l.825.825Q5.8 16 6.4 16h11.2L19 18V5H5v13Zm0 0V5v13Z"/></svg>
+       <div class="fs-5">No Records Found</div>
+     </div>
+   </ng-container>
+   
+       <!-- Paginator always at bottom -->
+    <app-paginator
+      [currentPage]="currentPage"
+      [totalItems]="totalItems"
+      [itemsPerPage]="itemsPerPage"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-paginator>
+</div>

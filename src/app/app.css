@@ -1,0 +1,36 @@
+:root {
+  --primary: #0052cc;
+}
+
+.navbar.bg-body-tertiary {
+  background-color: var(--primary) !important;
+}
+
+.navbar .navbar-brand,
+.navbar .nav-link,
+.navbar .btn,
+.navbar .form-control,
+.navbar .navbar-toggler-icon {
+  color: #ffffff !important;
+}
+
+/* Ensure the navbar search is readable */
+.navbar .form-control {
+  background-color: #0e2f66 !important; /* dark navy like screenshot */
+  color: #ffffff !important;
+  border: 1px solid rgba(255,255,255,0.15) !important;
+}
+
+.navbar .form-control::placeholder {
+  color: #b8c7e0 !important; /* light muted */
+}
+
+.navbar .btn.btn-outline-success {
+  border-color: #ffffff;
+  color: #ffffff;
+}
+
+.navbar .btn.btn-outline-success:hover {
+  background-color: #0747a6;
+}
+

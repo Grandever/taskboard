@@ -1,0 +1,103 @@
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="modalTitle" aria-hidden="true" #modalElement>
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="modalTitle">Add Task</h5>
+        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+        <div class="modal-body">
+          <div class="form-group">
+            <label for="title">Title</label>
+            <input
+              type="text"
+              id="title"
+              class="form-control"
+              formControlName="title"
+              placeholder="Enter title"/>
+          </div>
+          <div class="form-group">
+            <label for="description">Description</label>
+            <textarea
+              id="description"
+              class="form-control"
+              formControlName="description"
+              placeholder="Enter description">
+            </textarea>
+          </div>
+          <div class="form-group">
+            <label for="status">Status</label>
+            <select class="form-control" id="status" formControlName="status">
+              <option value="todo">To Do</option>
+              <option value="in_progress">In Progress</option>
+              <option value="code_review">Code Review</option>
+              <option value="test_ready">Test Ready</option>
+              <option value="finished">Finished</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="priority">Priority</label>
+            <select class="form-control" id="priority" formControlName="priority">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="urgent">Urgent</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="assignee">Assignee</label>
+            <div class="d-flex align-items-center gap-2">
+              <img *ngIf="taskForm.value.assignee as aid; else noAvatar" [src]="getAvatarForAssignee(aid)" alt="avatar" width="28" height="28" class="rounded-circle">
+              <ng-template #noAvatar></ng-template>
+              <select class="form-control" id="assignee" formControlName="assignee">
+                <option value="">Unassigned</option>
+                <option *ngFor="let u of users" [value]="u.id">{{ u.firstName }} {{ u.lastName }} ({{ u.username }})</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="dueDate">Due Date</label>
+            <input
+              type="date"
+              id="dueDate"
+              class="form-control"
+              formControlName="due_date"/>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+          <button type="submit" class="btn btn-primary" [disabled]="!taskForm.valid">Save Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- Toast Container (position bottom-right) -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3">
+  <div
+    id="liveToast"
+    class="toast"
+    role="alert"
+    aria-live="assertive"
+    aria-atomic="true"
+    [ngClass]="{ show: toastVisible }"
+  >
+    <div class="toast-header">
+      <strong class="me-auto">Task Manager</strong>
+      <small>Just now</small>
+      <button
+        type="button"
+        class="btn-close"
+        data-bs-dismiss="toast"
+        aria-label="Close"
+        (click)="hideToast()"
+      ></button>
+    </div>
+    <div class="toast-body">
+      Task submitted successfully!
+    </div>
+  </div>
+</div>

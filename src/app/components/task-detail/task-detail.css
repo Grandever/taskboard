@@ -1,0 +1,15 @@
+.task-detail-container {
+  border: 1px solid #ddd;
+  padding: 20px;
+  margin: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.task-detail-container h2 {
+  margin-bottom: 10px;
+}
+
+.task-detail-container p {
+  margin: 5px 0;
+}
