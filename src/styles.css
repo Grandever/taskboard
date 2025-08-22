@@ -1,1 +1,38 @@
 /* You can add global styles to this file, and also import other style files */
+.element-selector {
+  color: #0747A6; /* Jira Software blue */
+}
+.column-header i,
+.empty-placeholder i,
+.menu-icon i,
+.card-footer .card-type i {
+  color: #0747A6; /* Jira Software blue */
+}
+
+p-sidebar {
+  font-family: Arial, sans-serif;
+}
+
+p-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+p-sidebar ul li {
+  padding: 10px 0;
+}
+
+p-sidebar ul li a {
+  text-decoration: none;
+  color: #555; /* Customize link color */
+}
+
+p-sidebar ul li a:hover {
+  color: #0747A6; /* Add hover effect */
+}
+
+button {
+  margin: 20px;
+}
+
+

@@ -1,0 +1,29 @@
+<div class="task-detail-container" *ngIf="taskDetails">
+  <h2>Task Details</h2>
+  <p><strong>ID:</strong> {{ taskDetails.id }}</p>
+  <p><strong>Title:</strong> {{ taskDetails.title }}</p>
+  <p><strong>Description:</strong> {{ taskDetails.description || 'No description available.' }}</p>
+  <p><strong>Priority:</strong> {{ taskDetails.priority }}</p>
+  <p><strong>Due Date:</strong> {{ taskDetails.due_date || 'None' }}</p>
+  <p><strong>Assignee:</strong> {{ taskDetails.assignee || 'Unassigned' }}</p>
+  <p><strong>Create at:</strong> {{ taskDetails.created_at || 'Unassigned' }}</p>
+  <p><strong>Update at:</strong> {{ taskDetails.updated_at || 'Unassigned' }}</p>
+  <p><strong>Status:</strong> {{ taskDetails.status }}</p>
+
+  <!-- Edit and Delete Buttons -->
+  <div class="actions">
+    <button class="btn btn-warning me-2" (click)="editTask()">Edit</button>
+    <button class="btn btn-danger" (click)="deleteTask()">Delete</button>
+  </div>
+
+  <button class="btn btn-primary mt-3" routerLink="/board">Back to Board</button>
+</div>
+
+<task-form
+  [taskToEdit]="taskDetails"
+  (taskUpdated)="onTaskUpdated($event)"
+></task-form>
+
+<div *ngIf="!taskDetails">
+  <p>Task details could not be found.</p>
+</div>

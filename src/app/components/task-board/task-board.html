@@ -1,43 +1,43 @@
-<div class="container">
-  <div class="board-grid">
-    @for(column of columns; track $index){
-      <div class="column" (dragover)="onDragOver($event)" (drop)="onDrop(column.name, $event)">
-        <div class="column-header">
-          <span><i class="fas fa-{{column.icon}} me-2"></i>{{column.title}}</span>
-          <div class="d-flex align-items-center">
-            <div class="column-count">{{column.cards.length}}</div>
-            <div class="menu-icon ms-2"><i class="fas fa-ellipsis-h"></i></div>
-          </div>
-        </div>
-        <!-- Conditionally show placeholder when there are no cards -->
-        @if(!column.cards || column.cards.length === 0){
-          <div class="empty-placeholder">
-            <i>No cards yet</i>
-          </div>
-        }
-        <!-- Display cards -->
-        @for(card of column.cards; track $index){
-          <div class="card"
-               [class.card-high]="card.priority === 'high'"
-               [class.card-medium]="card.priority === 'medium'"
-               [class.card-low]="card.priority === 'low'"
-               draggable="true"
-               (dragstart)="onDragStart(card)"
-               (dragend)="onDragEnd()"
-               (dblclick)="editCard(card)">
-            <div class="card-id">{{card.id}}</div>
-            <div class="card-title">{{card.title}}</div>
-            <div class="card-footer">
-                <span class="card-type" [class.card-type-task]="card.type === 'task'"
-                      [class.card-type-bug]="card.type === 'bug'"
-                      [class.card-type-improvement]="card.type === 'improvement'">
-                  {{card.type | titlecase}}
-                </span>
-              <div class="card-avatar">{{card.assignee}}</div>
-            </div>
-          </div>
-        }
+<task-form
+  [taskToEdit]="selectedTask"
+  (taskAdded)="onTaskAdded($event)"
+  (taskUpdated)="onTaskUpdated($event)"
+></task-form>
+<div class="board-grid">
+  <!-- Loop through Columns -->
+  <div
+    class="column highlighted" *ngFor="let column of columns"
+    (dragover)="onDragOver($event)"
+    (drop)="onDrop(column.name, $event)"
+  >
+    <div class="column-header">
+      <span><i class="fas fa-{{ column.icon }} me-2"></i>{{ column.title }}</span>
+      <span class="task-count">{{ column.tasks.length }}</span>
+    </div>
+
+    <!-- Display Tasks -->
+    <div
+      *ngFor="let task of column.tasks"
+      class="task-card"
+      draggable="true"
+      (dragstart)="onDragStart(task)"
+      (dragend)="onDragEnd()"
+      (dblclick)="editTask(task)"
+      [routerLink]="['/task', task.id]"
+      style="border: #00b8d9 1px solid;"
+      (click)="logTaskClick(task)"
+
+    >
+      <div class="task-title">{{ task.title }}</div>
+      <div class="task-meta">
+        <span>Priority: {{ task.priority | titlecase }}</span>
+        <span>Due: {{ task.due_date || 'None' }}</span>
       </div>
-    }
+    </div>
+
+    <!-- Empty State -->
+    <div *ngIf="column.tasks.length === 0" class="empty-placeholder">
+      <i>No tasks available</i>
+    </div>
   </div>
 </div>
