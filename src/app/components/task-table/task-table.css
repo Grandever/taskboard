@@ -129,3 +129,52 @@
     margin-left: 0;
   }
 }
+
+/* Row click and selection styles */
+.table-row-clickable {
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.table-row-clickable:hover {
+  background-color: #f8f9fa !important;
+}
+
+.table-row-clickable:focus {
+  outline: 2px solid #28a745;
+  outline-offset: -2px;
+}
+
+.selected-row {
+  background-color: #e8f5e8 !important;
+  border-left: 4px solid #28a745;
+}
+
+.selected-row:hover {
+  background-color: #d4edda !important;
+}
+
+/* Action buttons styles */
+.btn-sm {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.25rem;
+}
+
+.btn-outline-primary:hover {
+  background-color: #007bff;
+  border-color: #007bff;
+  color: white;
+}
+
+.btn-outline-warning:hover {
+  background-color: #ffc107;
+  border-color: #ffc107;
+  color: #212529;
+}
+
+.btn-outline-danger:hover {
+  background-color: #dc3545;
+  border-color: #dc3545;
+  color: white;
+}
