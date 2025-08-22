@@ -20,6 +20,20 @@
   </div>
 </div>
 
+<!-- Pagination Summary -->
+<div *ngIf="!loading && totalItems > 0" class="mb-3">
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="text-muted">
+      <small>
+        Showing {{ (currentPage - 1) * itemsPerPage + 1 }} to {{ Math.min(currentPage * itemsPerPage, totalItems) }} of {{ totalItems }} tasks
+      </small>
+    </div>
+    <div class="text-muted">
+      <small>Page {{ currentPage }} of {{ Math.ceil(totalItems / itemsPerPage) }}</small>
+    </div>
+  </div>
+</div>
+
 <!-- Actual board -->
 <div *ngIf="!loading" class="d-flex position-relative" style="gap: 16px;">
   <div class="board-grid" [style.width]="detailOpen ? '50%' : '100%'">
@@ -43,9 +57,8 @@
       (dragstart)="onDragStart(task)"
       (dragend)="onDragEnd()"
       (dblclick)="editTask(task)"
-      [routerLink]="['/task', task.id]"
-      style="border: #00b8d9 1px solid;"
-      (click)="logTaskClick(task)"
+      style="border: #00b8d9 1px solid; cursor: pointer;"
+      (click)="openTaskDetail(task)"
     >
       <div class="task-title d-flex align-items-center justify-content-between">
         <span class="me-2">{{ task.title }}</span>
@@ -63,9 +76,30 @@
     </div>
   </div>
   </div>
-  <div *ngIf="detailOpen && selectedTask" style="width: 50%; min-width: 360px; position: relative; z-index: 2;">
-    <app-task-detail [taskInput]="selectedTask" (close)="detailOpen = false" (prev)="onPrev()" (next)="onNext()"></app-task-detail>
+  <!-- Task Detail Panel -->
+  <div *ngIf="detailOpen && selectedTask" class="task-detail-panel" style="width: 50%; min-width: 360px;">
+    <app-task-detail 
+      [taskInput]="selectedTask" 
+      (close)="closeTaskDetail()" 
+      (prev)="onPrev()" 
+      (next)="onNext()">
+    </app-task-detail>
   </div>
-  <div *ngIf="detailOpen" class="position-fixed top-0 start-0 w-100 h-100" style="background: rgba(0,0,0,0.2); z-index:1;" (click)="detailOpen=false"></div>
+  
+  <!-- Overlay -->
+  <div *ngIf="detailOpen" class="task-detail-overlay" (click)="closeTaskDetail()"></div>
 </div>
+
+<!-- Pagination -->
+<div *ngIf="!loading && totalItems > 0" class="mt-4">
+  <app-paginator
+    [currentPage]="currentPage"
+    [itemsPerPage]="itemsPerPage"
+    [totalItems]="totalItems"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange()"
+  ></app-paginator>
+</div>
+
+
 

@@ -1,10 +1,13 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {NgClass, NgForOf, NgIf, TitleCasePipe} from '@angular/common';
 import {TaskForm} from '../task-form/task-form';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { Task } from '../../models/task.interfaces'; // Qo'shildi
 import { TaskDetail } from '../task-detail/task-detail';
 import { SkeletonComponent } from '../skeleton/skeleton';
+import { TaskTable } from '../task-table/task-table';
+import { Paginator } from '../paginator/paginator';
+import { ToastrService } from 'ngx-toastr';
 
 
 
@@ -17,6 +20,7 @@ interface Column {
 
 @Component({
   selector: 'task-board',
+  standalone: true,
   templateUrl: './task-board.html',
   imports: [
     TitleCasePipe,
@@ -26,7 +30,9 @@ interface Column {
     TaskForm,
     RouterLink,
     TaskDetail,
-    SkeletonComponent
+    SkeletonComponent,
+    TaskTable,
+    Paginator
   ],
   styleUrls: ['./task-board.css']
 })
@@ -37,11 +43,39 @@ export class TaskBoard implements OnInit {
   selectedTask: Task | null = null;
   detailOpen: boolean = false;
   loading: boolean = true;
+  
+  // Pagination properties
+  currentPage: number = 1;
+  itemsPerPage: number = 20;
+  totalItems: number = 0;
+  paginatedTasks: Task[] = [];
+  
+  // Make Math available in template
+  Math = Math;
+  
+  @ViewChild(TaskTable) taskTableComponent!: TaskTable;
 
   private router= inject(Router)
   private route = inject(ActivatedRoute)
+  private toastr = inject(ToastrService)
 
   ngOnInit(): void {
+    // Check if we need to apply default query params
+    this.route.data.subscribe(data => {
+      if (data['defaultQueryParams'] && !this.route.snapshot.queryParams['sort']) {
+        // Apply default query params if no query params are present
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            sort: 'updated_at,desc',
+            page: 1,
+            size: 20
+          },
+          replaceUrl: true
+        });
+      }
+    });
+
     this.loading = true;
     // Load tasks from LocalStorage
     const storedTasks = localStorage.getItem('taskboard/v1/tasks');
@@ -49,7 +83,8 @@ export class TaskBoard implements OnInit {
       this.tasks = JSON.parse(storedTasks);
     }
 
-    // Dynamically build columns based on grouped tasks
+    // Apply pagination and generate columns
+    this.applyPagination();
     this.generateColumns();
     // Add delay to show skeleton for 500ms
     setTimeout(() => {
@@ -65,6 +100,7 @@ export class TaskBoard implements OnInit {
       if (title) {
         this.tasks = this.tasks.filter(t => (t.title || '').toLowerCase().includes(title));
       }
+      this.applyPagination();
       this.generateColumns();
       // Add delay to show skeleton for 500ms
       setTimeout(() => {
@@ -85,7 +121,7 @@ export class TaskBoard implements OnInit {
 
     this.columns = initialColumns.map((col) => ({
       ...col,
-      tasks: this.tasks.filter((task) => task.status === col.name) // Filter tasks by status
+      tasks: this.paginatedTasks.filter((task) => task.status === col.name) // Filter paginated tasks by status
     }));
   }
 
@@ -94,16 +130,30 @@ export class TaskBoard implements OnInit {
     localStorage.setItem('taskboard/v1/tasks', JSON.stringify(this.tasks));
   }
 
+  // Apply pagination to tasks
+  private applyPagination(): void {
+    this.totalItems = this.tasks.length;
+    const startIndex = (this.currentPage - 1) * this.itemsPerPage;
+    const endIndex = startIndex + this.itemsPerPage;
+    this.paginatedTasks = this.tasks.slice(startIndex, endIndex);
+  }
+
   
 
   onDragOver(event: DragEvent): void {
     event.preventDefault(); // Allow dropping
   }
 
-  logTaskClick(task: Task): void {
-    console.log('Task clicked:', task);
+  openTaskDetail(task: Task): void {
+    console.log('Opening task detail:', task);
     this.selectedTask = task;
     this.detailOpen = true;
+  }
+
+  closeTaskDetail(): void {
+    console.log('Closing task detail');
+    this.detailOpen = false;
+    this.selectedTask = null;
   }
 
   onPrev() {
@@ -126,25 +176,47 @@ export class TaskBoard implements OnInit {
   onDrop(columnName: string, event: DragEvent): void {
   event.preventDefault();
   if (this.draggedTask) {
+    const oldStatus = this.draggedTask.status;
+    const newStatus = columnName as Task['status'];
+    
     // Update task status
-    this.draggedTask.status = columnName as Task['status']; // tipga mos
+    this.draggedTask.status = newStatus;
+    this.draggedTask.updated_at = new Date().toISOString();
 
     // Update tasks in LocalStorage
     this.saveTasksToLocalStorage();
 
-    this.draggedTask.updated_at = new Date().toISOString();
-    // Regenerate columns to reflect the updated tasks
+    // Apply pagination and regenerate columns to reflect the updated tasks
+    this.applyPagination();
     this.generateColumns();
+    
+    // Show toastr notification
+    const statusLabels: Record<string, string> = {
+      'todo': 'To Do',
+      'in_progress': 'In Progress', 
+      'code_review': 'Code Review',
+      'test_ready': 'Test Ready',
+      'finished': 'Finished'
+    };
+    
+    const oldLabel = statusLabels[oldStatus] || oldStatus;
+    const newLabel = statusLabels[newStatus] || newStatus;
+    
+    this.toastr.success(
+      `Task "${this.draggedTask.title}" moved from ${oldLabel} to ${newLabel}`,
+      'Status Updated'
+    );
+    
     this.draggedTask = null;
   }
 }
 
   addTask(): void {
     const taskTitle = prompt('Enter task title:');
-    if (taskTitle) {
+    if (taskTitle && taskTitle.trim()) {
       const newTask: Task = {
         id: Date.now().toString(),
-        title: taskTitle,
+        title: taskTitle.trim(),
         description: '',
         status: 'todo',
         priority: 'medium',
@@ -158,7 +230,11 @@ export class TaskBoard implements OnInit {
 
       this.tasks.push(newTask); // Add the new task
       this.saveTasksToLocalStorage(); // Save to LocalStorage
+      this.applyPagination(); // Apply pagination
       this.generateColumns(); // Regenerate columns
+      
+      // Show toastr notification
+      this.toastr.success(`Task "${newTask.title}" created successfully`, 'Task Added');
     }
   }
 
@@ -170,13 +246,31 @@ export class TaskBoard implements OnInit {
     this.draggedTask = null; // Reset dragged task
   }
 
+  // Pagination event handlers
+  onPageChange(page: number): void {
+    this.currentPage = page;
+    this.applyPagination();
+    this.generateColumns();
+  }
+
+  onPageSizeChange(): void {
+    this.currentPage = 1; // Reset to first page when changing page size
+    this.applyPagination();
+    this.generateColumns();
+  }
+
   editTask(task: Task): void {
     const newTitle = prompt('Edit task title:', task.title);
     if (newTitle !== null && newTitle.trim() !== '') {
-      task.title = newTitle;
+      const oldTitle = task.title;
+      task.title = newTitle.trim();
       task.updated_at = new Date().toISOString();
       this.saveTasksToLocalStorage();
+      this.applyPagination(); // Apply pagination
       this.generateColumns(); // Update displayed columns
+      
+      // Show toastr notification
+      this.toastr.success(`Task title updated from "${oldTitle}" to "${task.title}"`, 'Task Updated');
     }
   }
 
@@ -197,20 +291,46 @@ export class TaskBoard implements OnInit {
     // Clear localStorage and reset state
     localStorage.removeItem('taskboard/v1/tasks');
     this.tasks = [];
+    this.applyPagination(); // Apply pagination
     this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.info('All tasks have been cleared', 'Data Cleared');
   }
 
   onTaskAdded(task: Task): void {
-    // LocalStorage dan qayta o'qish
-    const storedTasks = localStorage.getItem('taskboard/v1/tasks');
-    this.tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    // Add task to local array immediately
+    this.tasks.unshift(task);
+    // Apply pagination and regenerate columns to show new task
+    this.applyPagination();
     this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.success(`Task "${task.title}" added to board`, 'Task Added');
+    
+    // Don't call taskTableComponent.addTask here to avoid duplicate calls
+    // The task is already added to localStorage by TaskForm
   }
 
   onTaskUpdated(task: Task): void {
     // LocalStorage dan qayta o'qish
     const storedTasks = localStorage.getItem('taskboard/v1/tasks');
     this.tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    this.applyPagination();
     this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.success(`Task "${task.title}" updated successfully`, 'Task Updated');
+  }
+
+  onTaskDeleted(taskId: string): void {
+    // LocalStorage dan qayta o'qish
+    const storedTasks = localStorage.getItem('taskboard/v1/tasks');
+    this.tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    this.applyPagination();
+    this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.info('Task deleted successfully', 'Task Deleted');
   }
 }

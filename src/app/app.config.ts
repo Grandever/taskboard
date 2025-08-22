@@ -18,7 +18,10 @@ export const appConfig: ApplicationConfig = {
       timeOut: 3000,
       positionClass: 'toast-top-right',
       preventDuplicates: true,
+      closeButton: false,
+      progressBar: true,
+      newestOnTop: true,
+      maxOpened: 3
     })
-    // If you need to configure PrimeNG, do it in your module imports instead.
   ]
 };

@@ -11,33 +11,58 @@ export const localStorageTasksInterceptor: HttpInterceptorFn = (
   // Only intercept GETs to the tasks endpoint
   const url = new URL(req.url, window.location.origin);
   if (req.method === 'GET' && url.pathname === '/taskboard/v1/tasks') {
-    const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    const body = raw ? JSON.parse(raw) : [];
+    try {
+      const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
+      const body = raw ? JSON.parse(raw) : [];
 
-    // Optionally, we could apply server-like pagination/sorting here using req.params
-    // For now we return the full array as-is; the client paginates.
+      // Optionally, we could apply server-like pagination/sorting here using req.params
+      // For now we return the full array as-is; the client paginates.
 
-    return of(
-      new HttpResponse({
-        status: 200,
-        body,
-        headers: req.headers,
-        url: req.urlWithParams,
-      })
-    );
+      return of(
+        new HttpResponse({
+          status: 200,
+          body,
+          headers: req.headers,
+          url: req.urlWithParams,
+        })
+      );
+    } catch (error) {
+      console.error('LocalStorage error in interceptor:', error);
+      // Return empty array if localStorage is corrupted or full
+      return of(
+        new HttpResponse({
+          status: 200,
+          body: [],
+          headers: req.headers,
+          url: req.urlWithParams,
+        })
+      );
+    }
   }
 
   // Seed users if not present
   if (req.method === 'GET' && url.pathname === '/taskboard/v1/users') {
-    const usersKey = 'taskboard/v1/users';
-    let rawUsers = localStorage.getItem(usersKey);
-    if (!rawUsers) {
-      const seed: User[] = generateSeedUsers();
-      localStorage.setItem(usersKey, JSON.stringify(seed));
-      rawUsers = JSON.stringify(seed);
+    try {
+      const usersKey = 'taskboard/v1/users';
+      let rawUsers = localStorage.getItem(usersKey);
+      if (!rawUsers) {
+        const seed: User[] = generateSeedUsers();
+        try {
+          localStorage.setItem(usersKey, JSON.stringify(seed));
+          rawUsers = JSON.stringify(seed);
+        } catch (storageError) {
+          console.error('Failed to save users to localStorage:', storageError);
+          // Continue with in-memory seed users
+        }
+      }
+      const users = rawUsers ? JSON.parse(rawUsers) : [];
+      return of(new HttpResponse({ status: 200, body: users, headers: req.headers, url: req.urlWithParams }));
+    } catch (error) {
+      console.error('LocalStorage error for users:', error);
+      // Return seed users if localStorage is corrupted
+      const seedUsers = generateSeedUsers();
+      return of(new HttpResponse({ status: 200, body: seedUsers, headers: req.headers, url: req.urlWithParams }));
     }
-    const users = rawUsers ? JSON.parse(rawUsers) : [];
-    return of(new HttpResponse({ status: 200, body: users, headers: req.headers, url: req.urlWithParams }));
   }
 
   return next(req);

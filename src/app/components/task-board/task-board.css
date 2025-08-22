@@ -141,3 +141,59 @@
     background-position: -200% 0;
   }
 }
+
+/* Task detail panel styles */
+.task-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  backdrop-filter: blur(2px);
+}
+
+.task-detail-panel {
+  position: relative;
+  z-index: 2;
+  background: white;
+  border-left: 1px solid #ddd;
+  box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
+  height: 100vh;
+  overflow-y: auto;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Responsive design for detail panel */
+@media (max-width: 1200px) {
+  .board-grid {
+    grid-template-columns: repeat(4, 260px);
+  }
+}
+
+@media (max-width: 992px) {
+  .board-grid {
+    grid-template-columns: repeat(3, 240px);
+  }
+}
+
+@media (max-width: 768px) {
+  .board-grid {
+    grid-template-columns: repeat(2, 220px);
+  }
+  
+  .task-detail-panel {
+    width: 100% !important;
+    min-width: auto !important;
+  }
+}

@@ -3,20 +3,25 @@
     <div class="modal-content">
       <div class="modal-header">
         <h5 class="modal-title" id="modalTitle">Add Task</h5>
-        <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close">
         </button>
       </div>
-      <form [formGroup]="taskForm" (ngSubmit)="onSubmit()">
+      <form [formGroup]="taskForm" (ngSubmit)="onSubmit($event)" novalidate>
         <div class="modal-body">
           <div class="form-group">
-            <label for="title">Title</label>
+            <label for="title">Title *</label>
             <input
               type="text"
               id="title"
               class="form-control"
               formControlName="title"
-              placeholder="Enter title"/>
+              placeholder="Enter title"
+              [class.is-invalid]="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"/>
+            <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched" class="invalid-feedback">
+              <div *ngIf="taskForm.get('title')?.errors?.['required']">Title is required</div>
+              <div *ngIf="taskForm.get('title')?.errors?.['minlength']">Title must be at least 3 characters</div>
+              <div *ngIf="taskForm.get('title')?.errors?.['maxlength']">Title must not exceed 120 characters</div>
+            </div>
           </div>
           <div class="form-group">
             <label for="description">Description</label>
@@ -64,40 +69,27 @@
               id="dueDate"
               class="form-control"
               formControlName="due_date"/>
+            <div *ngIf="taskForm.get('due_date')?.value && isTaskOverdue(taskForm.get('due_date')?.value, taskForm.get('status')?.value)" 
+                 class="text-danger mt-1 small">
+              <i class="fas fa-exclamation-triangle"></i> This task is overdue
+            </div>
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-          <button type="submit" class="btn btn-primary" [disabled]="!taskForm.valid">Save Task</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" [disabled]="isSubmitting">Close</button>
+          <button 
+            type="submit" 
+            class="btn btn-primary" 
+            [disabled]="!taskForm.valid || isSubmitting"
+            [class.btn-loading]="isSubmitting">
+            <span *ngIf="!isSubmitting">Save Task</span>
+            <span *ngIf="isSubmitting">
+              <i class="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></i>
+              Saving...
+            </span>
+          </button>
         </div>
       </form>
-    </div>
-  </div>
-</div>
-
-<!-- Toast Container (position bottom-right) -->
-<div class="toast-container position-fixed bottom-0 end-0 p-3">
-  <div
-    id="liveToast"
-    class="toast"
-    role="alert"
-    aria-live="assertive"
-    aria-atomic="true"
-    [ngClass]="{ show: toastVisible }"
-  >
-    <div class="toast-header">
-      <strong class="me-auto">Task Manager</strong>
-      <small>Just now</small>
-      <button
-        type="button"
-        class="btn-close"
-        data-bs-dismiss="toast"
-        aria-label="Close"
-        (click)="hideToast()"
-      ></button>
-    </div>
-    <div class="toast-body">
-      Task submitted successfully!
     </div>
   </div>
 </div>

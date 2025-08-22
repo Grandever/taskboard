@@ -16,7 +16,7 @@ import { NgForOf, NgIf } from '@angular/common';
           </div>
         </div>
         <div class="skeleton-body">
-          <div *ngFor="let row of rows" class="skeleton-row">
+          <div *ngFor="let row of rowsArray" class="skeleton-row">
             <div *ngFor="let col of columns" class="skeleton-col" [style.width]="col.width">
               <span class="placeholder col-12"></span>
             </div>

@@ -8,6 +8,7 @@ import {RouterLink, RouterOutlet} from '@angular/router';
 
 @Component({
   selector: 'app-root',
+  standalone: true,
   imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule],
   templateUrl: './app.html',
   styleUrl: './app.css'
