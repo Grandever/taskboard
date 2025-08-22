@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { generateSampleData, clearTaskboardData, getDataStatistics } from '../../utils/generate-sample-data';
+import { NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-data-generator',
@@ -97,7 +98,7 @@ import { generateSampleData, clearTaskboardData, getDataStatistics } from '../..
       color: #6c757d;
     }
   `],
-  imports: [FormsModule]
+  imports: [FormsModule, NgClass]
 })
 export class DataGeneratorComponent {
   isGenerating = false;
