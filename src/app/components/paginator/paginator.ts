@@ -1,12 +1,12 @@
 // paginator.ts
 import { Component, EventEmitter, Input, Output } from '@angular/core';
-import { NgForOf } from '@angular/common';
+
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-paginator',
   standalone: true,
-  imports: [NgForOf, FormsModule],
+  imports: [FormsModule],
   templateUrl: './paginator.html',
   styleUrls: ['./paginator.css']
 })
