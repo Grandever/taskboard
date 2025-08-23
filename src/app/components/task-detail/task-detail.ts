@@ -1,5 +1,5 @@
 import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angular/core';
-import {ActivatedRoute, Router, RouterLink} from '@angular/router';
+import {ActivatedRoute, Router} from '@angular/router';
 import { Task, User } from '../../models/task.interfaces';
 import { HttpClient } from '@angular/common/http';
 import {NgIf, TitleCasePipe, DatePipe, NgClass} from '@angular/common';
@@ -14,7 +14,6 @@ import Swal from 'sweetalert2';
   standalone: true,
   templateUrl: './task-detail.html',
   imports: [
-    RouterLink,
     NgIf,
     TitleCasePipe,
     DatePipe,
