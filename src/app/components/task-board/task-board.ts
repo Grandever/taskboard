@@ -29,10 +29,7 @@ interface Column {
     NgIf,
     NgClass,
     TaskForm,
-    RouterLink,
     TaskDetail,
-    SkeletonComponent,
-    TaskTableComponent,
     Paginator
   ],
   styleUrls: ['./task-board.css']

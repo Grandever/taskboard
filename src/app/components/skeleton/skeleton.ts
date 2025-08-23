@@ -1,10 +1,10 @@
 import { Component, Input } from '@angular/core';
-import { NgForOf, NgIf } from '@angular/common';
+import { NgForOf } from '@angular/common';
 
 @Component({
   selector: 'app-skeleton',
   standalone: true,
-  imports: [NgForOf, NgIf],
+  imports: [NgForOf],
   template: `
     <div class="skeleton-container">
       <!-- Table skeleton -->

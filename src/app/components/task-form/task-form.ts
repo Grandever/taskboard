@@ -2,7 +2,7 @@ import {Component, ElementRef, EventEmitter, inject, Input, OnInit, Output, View
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import { Task, User } from '../../models/task.interfaces';
 import { TaskStatus, TaskPriority, TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS } from '../../models/task.enums';
-import {NgClass, NgForOf, NgIf} from '@angular/common';
+import {NgForOf, NgIf} from '@angular/common';
 import { ToastrService } from 'ngx-toastr';
 import { FormValidatorDirective } from '../../directives/form-validator.directive';
 import { TaskService } from '../../services/task.service';
@@ -17,7 +17,6 @@ declare var bootstrap: any;
   templateUrl: './task-form.html',
   imports: [
     ReactiveFormsModule,
-    NgClass,
     NgForOf,
     NgIf,
     FormValidatorDirective
