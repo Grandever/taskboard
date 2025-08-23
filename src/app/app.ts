@@ -2,7 +2,6 @@ import {Component, OnInit, ViewChild, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import {ActivatedRoute, Router, RouterLinkActive} from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import {TaskBoard} from './components/task-board/task-board';
 import {TaskForm} from './components/task-form/task-form';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {ThemeToggleComponent} from './components/theme-toggle/theme-toggle';
@@ -19,7 +18,7 @@ import { ThemeService } from './services/theme.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule, ThemeToggleComponent, RouterLinkActive, UndoToastContainerComponent],
+  imports: [ RouterOutlet, RouterLink, FormsModule, ThemeToggleComponent, RouterLinkActive, UndoToastContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
