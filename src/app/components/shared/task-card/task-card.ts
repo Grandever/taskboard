@@ -24,6 +24,7 @@ import { StatusLabelPipe } from '../../../pipes/status-label.pipe';
         </h6>
         <div class="task-priority">
           <span class="badge" [ngClass]="getPriorityBadgeClass()">
+            <i class="bi" [ngClass]="getPriorityIcon()"></i>
             {{ task.priority }}
           </span>
         </div>
@@ -163,11 +164,21 @@ export class TaskCard {
 
   getPriorityBadgeClass(): string {
     switch (this.task.priority) {
-      case TaskPriority.URGENT: return 'badge bg-danger';
-      case TaskPriority.HIGH: return 'badge bg-warning text-dark';
-      case TaskPriority.MEDIUM: return 'badge bg-primary';
-      case TaskPriority.LOW:
-      default: return 'badge bg-secondary';
+      case TaskPriority.URGENT: return 'priority-urgent';
+      case TaskPriority.HIGH: return 'priority-high';
+      case TaskPriority.MEDIUM: return 'priority-medium';
+      case TaskPriority.LOW: return 'priority-low';
+      default: return 'priority-default';
+    }
+  }
+
+  getPriorityIcon(): string {
+    switch (this.task.priority) {
+      case TaskPriority.URGENT: return 'bi-exclamation-triangle-fill';
+      case TaskPriority.HIGH: return 'bi-arrow-up-circle-fill';
+      case TaskPriority.MEDIUM: return 'bi-dash-circle-fill';
+      case TaskPriority.LOW: return 'bi-arrow-down-circle-fill';
+      default: return 'bi-circle-fill';
     }
   }
 

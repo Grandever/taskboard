@@ -2,7 +2,7 @@ import {Component, EventEmitter, Input, OnInit, Output, ViewChild} from '@angula
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import { Task, User } from '../../models/task.interfaces';
 import { HttpClient } from '@angular/common/http';
-import {NgIf, TitleCasePipe, DatePipe} from '@angular/common';
+import {NgIf, TitleCasePipe, DatePipe, NgClass} from '@angular/common';
 import {FormsModule} from '@angular/forms';
 import {TaskForm} from '../task-form/task-form';
 import { StatusLabelPipe } from '../../pipes/status-label.pipe';
@@ -20,7 +20,8 @@ import Swal from 'sweetalert2';
     DatePipe,
     StatusLabelPipe,
     TaskForm,
-    FormsModule
+    FormsModule,
+    NgClass
   ],
   styleUrls: ['./task-detail.css']
 })
@@ -113,7 +114,7 @@ export class TaskDetail implements OnInit {
       this.editingDueDateValue = this.taskDetails.due_date || '';
     }
   }
- 
+
   // Open the TaskForm component in edit mode
   editTask(): void {
     if (this.taskFormComponent) {
@@ -144,17 +145,17 @@ export class TaskDetail implements OnInit {
   // Assign task to current user (simulated)
   assignToMe(): void {
     if (!this.taskDetails) return;
-    
+
     // Simulate current user (in real app, this would come from auth service)
     const currentUserId = 'user_1'; // Default user for demo
-    
+
     // Update task assignee
-    const updatedTask = { 
-      ...this.taskDetails, 
+    const updatedTask = {
+      ...this.taskDetails,
       assignee: currentUserId,
-      updated_at: new Date().toISOString() 
+      updated_at: new Date().toISOString()
     };
-    
+
     // Update in localStorage
     const storedTasks = localStorage.getItem('taskboard/v1/tasks');
     if (storedTasks) {
@@ -163,10 +164,10 @@ export class TaskDetail implements OnInit {
       if (taskIndex > -1) {
         tasks[taskIndex] = updatedTask;
         localStorage.setItem('taskboard/v1/tasks', JSON.stringify(tasks));
-        
+
         // Update local reference
         this.taskDetails = updatedTask;
-        
+
         // Show success message
         this.toastr.success('Task assigned to you successfully!', 'Assigned');
       }
@@ -181,10 +182,10 @@ export class TaskDetail implements OnInit {
 
   saveStatus(): void {
     if (this.taskDetails && this.editingStatusValue) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         status: this.editingStatusValue as Task['status'],
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingStatus = false;
@@ -204,10 +205,10 @@ export class TaskDetail implements OnInit {
 
   savePriority(): void {
     if (this.taskDetails && this.editingPriorityValue) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         priority: this.editingPriorityValue as Task['priority'],
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingPriority = false;
@@ -227,10 +228,10 @@ export class TaskDetail implements OnInit {
 
   saveTitle(): void {
     if (this.taskDetails && this.editingTitleValue.trim()) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         title: this.editingTitleValue.trim(),
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingTitle = false;
@@ -250,10 +251,10 @@ export class TaskDetail implements OnInit {
 
   savePoints(): void {
     if (this.taskDetails) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         points: this.editingPointsValue,
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingPoints = false;
@@ -273,10 +274,10 @@ export class TaskDetail implements OnInit {
 
   saveDescription(): void {
     if (this.taskDetails) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         description: this.editingDescriptionValue,
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingDescription = false;
@@ -296,10 +297,10 @@ export class TaskDetail implements OnInit {
 
   saveDueDate(): void {
     if (this.taskDetails) {
-      const updatedTask = { 
-        ...this.taskDetails, 
+      const updatedTask = {
+        ...this.taskDetails,
         due_date: this.editingDueDateValue,
-        updated_at: new Date().toISOString() 
+        updated_at: new Date().toISOString()
       };
       this.updateTaskInStorage(updatedTask);
       this.editingDueDate = false;

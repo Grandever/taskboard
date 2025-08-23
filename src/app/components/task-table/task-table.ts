@@ -11,6 +11,7 @@ import { BulkActionsComponent } from '../bulk-actions/bulk-actions';
 import { WipWarningComponent } from '../wip-warning/wip-warning';
 import { ControlsPanelComponent } from '../controls-panel/controls-panel';
 import { TaskDetail } from '../task-detail/task-detail';
+import { TaskForm } from '../task-form/task-form';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { StatusLabelPipe } from '../../pipes/status-label.pipe';
 import { TaskStatus, TaskPriority, TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS } from '../../models/task.enums';
