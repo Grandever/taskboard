@@ -1,15 +1,23 @@
+import { TaskStatus, TaskPriority } from './task.enums';
+
 export interface Task {
   id: string;
   title: string;
   description?: string;
-  status: 'todo' | 'in_progress' | 'code_review' | 'test_ready' | 'finished';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: TaskStatus;
+  priority: TaskPriority;
   assignee?: string; // user id
   tags?: string[];
   due_date?: string;
   created_at: string;
   updated_at: string;
   points?: number;
+  // New fields for enhanced functionality
+  estimated_hours?: number;
+  actual_hours?: number;
+  attachments?: string[];
+  deleted_at?: string; // For recycle bin
+  original_id?: string; // For recycle bin restoration
 }
 
 export interface AppSettings {
@@ -19,11 +27,83 @@ export interface AppSettings {
     dir: 'asc' | 'desc';
   };
   lastUsedFilters: {
-    status?: 'todo' | 'in_progress' | 'code_review' | 'test_ready' | 'finished';
-    priority?: 'low' | 'medium' | 'high' | 'urgent';
+    status?: TaskStatus;
+    priority?: TaskPriority;
     assignee?: string;
-    due_date_range?: { from: string; to: string };
+    due_date_range?: { from?: string; to?: string };
     tags?: string[];
+    search?: string;
+    created_by?: string;
+    updated_by?: string;
+    estimated_hours_range?: { min: number; max: number };
+    actual_hours_range?: { min: number; max: number };
+    has_attachments?: boolean;
+    is_overdue?: boolean;
+    is_completed?: boolean;
+    // Additional filter fields for table
+    title?: string;
+    updated_at?: string;
+    due_date?: string;
+    status_multi?: TaskStatus[];
+    priority_multi?: TaskPriority[];
+    assignee_multi?: string[];
+    tags_multi?: string[];
+    sort_by?: string;
+    sort_dir?: 'asc' | 'desc';
+    page_size?: number;
+    tab?: string;
+  };
+  // UI Settings
+  theme: 'light' | 'dark';
+  language: 'uz' | 'en' | 'ru';
+  compactMode: boolean;
+  showCompletedTasks: boolean;
+  showOverdueTasks: boolean;
+  defaultView: 'board' | 'table' | 'calendar';
+  
+  // Notifications
+  notifications: {
+    enabled: boolean;
+    sound: boolean;
+    desktop: boolean;
+    email: boolean;
+    taskDueReminder: number; // hours before due date
+    dailyDigest: boolean;
+    weeklyReport: boolean;
+  };
+  
+  // Performance & Storage
+  performance: {
+    autoSaveDelay: number;
+    maxRecycleItems: number;
+    cacheExpiryHours: number;
+    batchOperations: boolean;
+    lazyLoading: boolean;
+  };
+  
+  // Data Management
+  dataManagement: {
+    autoBackup: boolean;
+    backupFrequency: 'daily' | 'weekly' | 'monthly';
+    maxBackups: number;
+    exportFormat: 'json' | 'csv' | 'excel';
+    importValidation: boolean;
+  };
+  
+  // Security & Privacy
+  security: {
+    encryptSensitiveData: boolean;
+    sessionTimeout: number; // minutes
+    requireConfirmation: boolean;
+    auditLog: boolean;
+  };
+  
+  // Integration Settings
+  integrations: {
+    calendarSync: boolean;
+    emailIntegration: boolean;
+    slackNotifications: boolean;
+    githubIntegration: boolean;
   };
 }
 

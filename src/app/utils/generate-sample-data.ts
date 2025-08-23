@@ -1,5 +1,6 @@
 // Utility to generate sample task data for localStorage
 import { Task, User } from '../models/task.interfaces';
+import { TaskStatus, TaskPriority } from '../models/task.enums';
 
 export interface SampleDataGenerator {
   generateTasks(count: number): Task[];
@@ -54,8 +55,8 @@ export class TaskDataGenerator implements SampleDataGenerator {
     'Security enhancement to protect user data and system integrity.'
   ];
 
-  private statuses: Task['status'][] = ['todo', 'in_progress', 'code_review', 'test_ready', 'finished'];
-  private priorities: Task['priority'][] = ['low', 'medium', 'high', 'urgent'];
+  private statuses: Task['status'][] = [TaskStatus.TODO, TaskStatus.IN_PROGRESS, TaskStatus.CODE_REVIEW, TaskStatus.TEST_READY, TaskStatus.FINISHED];
+  private priorities: Task['priority'][] = [TaskPriority.LOW, TaskPriority.MEDIUM, TaskPriority.HIGH, TaskPriority.URGENT];
   private tags = ['frontend', 'backend', 'database', 'api', 'ui', 'ux', 'testing', 'deployment', 'security', 'performance'];
 
   generateTasks(count: number): Task[] {

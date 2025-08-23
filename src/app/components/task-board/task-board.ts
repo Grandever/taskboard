@@ -2,7 +2,8 @@ import {Component, inject, OnInit, ViewChild} from '@angular/core';
 import {NgClass, NgForOf, NgIf, TitleCasePipe} from '@angular/common';
 import {TaskForm} from '../task-form/task-form';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
-import { Task } from '../../models/task.interfaces'; // Qo'shildi
+import { Task } from '../../models/task.interfaces';
+import { TaskStatus, TaskPriority, getTaskStatusLabel, getTaskStatusIcon } from '../../models/task.enums';
 import { TaskDetail } from '../task-detail/task-detail';
 import { SkeletonComponent } from '../skeleton/skeleton';
 import { TaskTable } from '../task-table/task-table';
@@ -112,11 +113,11 @@ export class TaskBoard implements OnInit {
   // Group tasks by status and generate columns dynamically
   private generateColumns(): void {
     const initialColumns = [
-      { name: 'todo', title: 'To Do', icon: 'clipboard-list' },
-      { name: 'in_progress', title: 'In Progress', icon: 'spinner' },
-      { name: 'code_review', title: 'Code Review', icon: 'code' },
-      { name: 'test_ready', title: 'Test Ready', icon: 'check-circle' },
-      { name: 'finished', title: 'Finished', icon: 'check-circle' },
+      { name: TaskStatus.TODO, title: getTaskStatusLabel(TaskStatus.TODO), icon: getTaskStatusIcon(TaskStatus.TODO) },
+      { name: TaskStatus.IN_PROGRESS, title: getTaskStatusLabel(TaskStatus.IN_PROGRESS), icon: getTaskStatusIcon(TaskStatus.IN_PROGRESS) },
+      { name: TaskStatus.CODE_REVIEW, title: getTaskStatusLabel(TaskStatus.CODE_REVIEW), icon: getTaskStatusIcon(TaskStatus.CODE_REVIEW) },
+      { name: TaskStatus.TEST_READY, title: getTaskStatusLabel(TaskStatus.TEST_READY), icon: getTaskStatusIcon(TaskStatus.TEST_READY) },
+      { name: TaskStatus.FINISHED, title: getTaskStatusLabel(TaskStatus.FINISHED), icon: getTaskStatusIcon(TaskStatus.FINISHED) },
     ];
 
     this.columns = initialColumns.map((col) => ({
@@ -191,16 +192,8 @@ export class TaskBoard implements OnInit {
     this.generateColumns();
     
     // Show toastr notification
-    const statusLabels: Record<string, string> = {
-      'todo': 'To Do',
-      'in_progress': 'In Progress', 
-      'code_review': 'Code Review',
-      'test_ready': 'Test Ready',
-      'finished': 'Finished'
-    };
-    
-    const oldLabel = statusLabels[oldStatus] || oldStatus;
-    const newLabel = statusLabels[newStatus] || newStatus;
+    const oldLabel = getTaskStatusLabel(oldStatus as TaskStatus);
+    const newLabel = getTaskStatusLabel(newStatus as TaskStatus);
     
     this.toastr.success(
       `Task "${this.draggedTask.title}" moved from ${oldLabel} to ${newLabel}`,
@@ -218,8 +211,8 @@ export class TaskBoard implements OnInit {
         id: Date.now().toString(),
         title: taskTitle.trim(),
         description: '',
-        status: 'todo',
-        priority: 'medium',
+        status: TaskStatus.TODO,
+        priority: TaskPriority.MEDIUM,
         assignee: '',
         tags: [],
         due_date: '',
@@ -276,12 +269,12 @@ export class TaskBoard implements OnInit {
 
   getPriorityClass(priority: Task['priority']): string {
     switch (priority) {
-      case 'urgent':
-      case 'high':
+      case TaskPriority.URGENT:
+      case TaskPriority.HIGH:
         return 'high';
-      case 'medium':
+      case TaskPriority.MEDIUM:
         return 'medium';
-      case 'low':
+      case TaskPriority.LOW:
       default:
         return 'low';
     }
@@ -332,5 +325,28 @@ export class TaskBoard implements OnInit {
     
     // Show toastr notification
     this.toastr.info('Task deleted successfully', 'Task Deleted');
+  }
+
+  // Handle bulk actions from task table
+  onBulkTasksDeleted(taskIds: string[]): void {
+    // LocalStorage dan qayta o'qish
+    const storedTasks = localStorage.getItem('taskboard/v1/tasks');
+    this.tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    this.applyPagination();
+    this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.info(`${taskIds.length} tasks deleted successfully`, 'Bulk Delete');
+  }
+
+  onBulkTasksUpdated(updatedTasks: Task[]): void {
+    // LocalStorage dan qayta o'qish
+    const storedTasks = localStorage.getItem('taskboard/v1/tasks');
+    this.tasks = storedTasks ? JSON.parse(storedTasks) : [];
+    this.applyPagination();
+    this.generateColumns();
+    
+    // Show toastr notification
+    this.toastr.success(`${updatedTasks.length} tasks updated successfully`, 'Bulk Update');
   }
 }

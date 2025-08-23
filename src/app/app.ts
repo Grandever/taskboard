@@ -1,10 +1,17 @@
-import {Component, OnInit, ViewChild} from '@angular/core';
+import {Component, OnInit, ViewChild, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import {TaskBoard} from './components/task-board/task-board';
 import {TaskForm} from './components/task-form/task-form';
 import {RouterLink, RouterOutlet} from '@angular/router';
+import { 
+  AppSettingsService, 
+  RecycleBinService, 
+  AutoSaveService, 
+  StorageSyncService, 
+  StorageMigrationService 
+} from './services';
 
 @Component({
   selector: 'app-root',
@@ -20,9 +27,41 @@ export class App implements OnInit{
   titleSearch: string = '';
   private titleSearchInput$ = new Subject<string>();
 
+  // Inject services to initialize them
+  private settingsService = inject(AppSettingsService);
+  private recycleBinService = inject(RecycleBinService);
+  private autoSaveService = inject(AutoSaveService);
+  private storageSyncService = inject(StorageSyncService);
+  private migrationService = inject(StorageMigrationService);
+
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
+    this.initializeServices();
+    this.setupSearch();
+  }
+
+  private async initializeServices(): Promise<void> {
+    try {
+      // Check for pending migrations
+      const migrationResult = await this.migrationService.checkForMigrations();
+      if (migrationResult.success && migrationResult.migratedKeys.length > 0) {
+        console.log('Migrations completed:', migrationResult.migratedKeys);
+      }
+
+      // Cleanup old recycle bin items
+      this.recycleBinService.cleanupOldItems();
+
+      // Cleanup old tasks
+      this.autoSaveService.cleanupOldTasks();
+
+      console.log('All services initialized successfully');
+    } catch (error) {
+      console.error('Error initializing services:', error);
+    }
+  }
+
+  private setupSearch(): void {
     this.route.queryParamMap.subscribe((p) => {
       const t = p.get('title');
       this.titleSearch = t ?? '';

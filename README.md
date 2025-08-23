@@ -1,59 +1,306 @@
-# Taskboard
+# TaskBoard Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+A modern task management application built with Angular, featuring both table and board views for managing tasks.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Dual View Modes**: Table view and Kanban board view
+- **Universal Form Validation**: Custom directive for consistent form validation across the application
+- **Drag & Drop**: Move tasks between columns in board view
+- **Real-time Filtering**: Advanced filtering and sorting capabilities
+- **Responsive Design**: Works on desktop and mobile devices
+- **Enhanced Local Storage**: Advanced data persistence with versioning, auto-save, and multi-tab sync
 
-```bash
-ng serve
+## Enhanced LocalStorage Features
+
+The application now includes advanced LocalStorage functionality for better data management and user experience.
+
+### Storage Structure
+
+```
+taskboard:v1:tasks          → Task[] (Main task data)
+taskboard:v1:settings       → AppSettings (User preferences)
+taskboard:v1:recycle_bin    → Task[] (Deleted tasks)
+taskboard:v1:users          → User[] (User data)
+taskboard:version           → Current storage version
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Key Features
 
-## Code scaffolding
+#### 1. **Versioning & Migration**
+- Current version: `v1`
+- Automatic migration system for future format changes
+- Backup creation before migrations
+- Rollback capability for failed migrations
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+#### 2. **Auto-save with Debounce**
+- Configurable debounce time (default: 100ms)
+- Prevents excessive localStorage writes
+- Real-time save status indicators
+- Immediate save option for critical operations
 
-```bash
-ng generate component component-name
+#### 3. **Multi-tab Synchronization**
+- Automatic sync between multiple open tabs
+- Storage event listeners for cross-tab communication
+- Session tracking and presence detection
+- Conflict resolution for concurrent changes
+
+#### 4. **Recycle Bin**
+- Soft delete functionality
+- Automatic cleanup of old items (30+ days)
+- Task restoration capability
+- Configurable maximum items limit
+
+#### 5. **Advanced Settings Management**
+- User preferences persistence with comprehensive options
+- Theme, language, and UI customization
+- Performance tuning and storage optimization
+- Advanced notification and reminder settings
+- Data management and backup configuration
+- Security and privacy controls
+- Third-party integrations
+- Export/Import settings functionality
+
+### Usage Examples
+
+#### Auto-save Service
+```typescript
+import { AutoSaveService } from './services/auto-save.service';
+
+constructor(private autoSave: AutoSaveService) {}
+
+// Queue tasks for auto-save (with debounce)
+this.autoSave.queueSave(updatedTasks);
+
+// Immediate save (bypasses debounce)
+this.autoSave.saveImmediately(criticalTasks);
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+#### AppSettings Service
+```typescript
+import { AppSettingsService } from './services/app-settings.service';
 
-```bash
-ng generate --help
+constructor(private settingsService: AppSettingsService) {}
+
+// Basic settings
+this.settingsService.updatePageSize(50);
+this.settingsService.updateTheme('dark');
+this.settingsService.updateLanguage('en');
+
+// UI settings
+this.settingsService.updateCompactMode(true);
+this.settingsService.updateDefaultView('table');
+this.settingsService.updateShowCompletedTasks(false);
+
+// Notification settings
+this.settingsService.updateNotificationSettings({
+  taskDueReminder: 48,
+  dailyDigest: true,
+  weeklyReport: true
+});
+
+// Performance settings
+this.settingsService.updatePerformanceSettings({
+  autoSaveDelay: 150,
+  maxRecycleItems: 200,
+  batchOperations: true
+});
+
+// Data management
+this.settingsService.updateDataManagementSettings({
+  autoBackup: true,
+  backupFrequency: 'daily',
+  maxBackups: 30
+});
+
+// Export/Import settings
+const settingsJson = this.settingsService.exportSettings();
+this.settingsService.importSettings(settingsJson);
+
+// Filter management
+this.settingsService.updateLastUsedFilters({
+  status: 'in_progress',
+  priority: 'high',
+  search: 'urgent'
+});
 ```
 
-## Building
+#### Recycle Bin Service
+```typescript
+import { RecycleBinService } from './services/recycle-bin.service';
 
-To build the project run:
+constructor(private recycleBin: RecycleBinService) {}
 
-```bash
-ng build
+// Move task to recycle bin
+this.recycleBin.addToRecycleBin(task);
+
+// Restore deleted task
+const restoredTask = this.recycleBin.restoreTask(deletedTask);
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+#### Storage Sync Service
+```typescript
+import { StorageSyncService } from './services/storage-sync.service';
 
-## Running unit tests
+constructor(private storageSync: StorageSyncService) {}
 
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
+// Listen for external changes
+this.storageSync.storageChanges$.subscribe(change => {
+  console.log('Storage changed:', change);
+});
 
-```bash
-ng test
+// Get active tabs
+const activeTabs = this.storageSync.getActiveTabs();
 ```
 
-## Running end-to-end tests
+#### Migration Service
+```typescript
+import { StorageMigrationService } from './services/storage-migration.service';
 
-For end-to-end (e2e) testing, run:
+constructor(private migration: StorageMigrationService) {}
 
-```bash
-ng e2e
+// Check for pending migrations
+const result = await this.migration.checkForMigrations();
+
+// Force migration to specific version
+const result = await this.migration.forceMigration('v1.2');
 ```
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+## Universal Form Validator Directive
 
-## Additional Resources
+The application includes a universal `FormValidatorDirective` that provides consistent form validation across all components.
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Usage
+
+```html
+<ng-template appFormValidator [appFormValidator]="formControl" [fieldName]="'Field Name'" let-errors>
+  <div class="invalid-feedback" *ngFor="let error of errors">
+    {{ error }}
+  </div>
+</ng-template>
+```
+
+### Features
+
+- **Automatic Error Detection**: Shows errors when field is invalid and touched
+- **Custom Messages**: Support for custom error messages
+- **Field Name Integration**: Automatic field name in error messages
+- **Multiple Error Types**: Supports all common validation types:
+  - `required`
+  - `minlength` / `maxlength`
+  - `min` / `max`
+  - `email`
+  - `pattern`
+  - `unique`
+  - `passwordMismatch`
+  - `invalidDate`
+  - `futureDate`
+  - `pastDate`
+
+### Example Implementation
+
+```typescript
+// In your component
+import { FormValidatorDirective } from '../directives/form-validator.directive';
+
+@Component({
+  imports: [FormValidatorDirective],
+  // ... other component configuration
+})
+```
+
+```html
+<!-- In your template -->
+<input 
+  type="text" 
+  formControlName="title"
+  [class.is-invalid]="form.get('title')?.invalid && form.get('title')?.touched"/>
+
+<ng-template appFormValidator [appFormValidator]="form.get('title')" [fieldName]="'Title'" let-errors>
+  <div class="invalid-feedback" *ngFor="let error of errors">
+    {{ error }}
+  </div>
+</ng-template>
+```
+
+### Custom Error Messages
+
+```html
+<ng-template 
+  appFormValidator 
+  [appFormValidator]="form.get('email')" 
+  [fieldName]="'Email'"
+  [customMessages]="{'required': 'Email address is mandatory'}"
+  let-errors>
+  <div class="invalid-feedback" *ngFor="let error of errors">
+    {{ error }}
+  </div>
+</ng-template>
+```
+
+## Getting Started
+
+1. **Install Dependencies**
+   ```bash
+   npm install
+   ```
+
+2. **Run Development Server**
+   ```bash
+   npm start
+   ```
+
+3. **Build for Production**
+   ```bash
+   npm run build
+   ```
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── components/
+│   │   ├── task-board/          # Kanban board view
+│   │   ├── task-table/          # Table view
+│   │   ├── task-form/           # Task creation/editing form
+│   │   ├── task-detail/         # Task detail panel
+│   │   ├── skeleton/            # Loading skeleton component
+│   │   └── paginator/           # Pagination component
+│   ├── directives/
+│   │   └── form-validator.directive.ts  # Universal form validator
+│   ├── models/
+│   │   └── task.interfaces.ts   # TypeScript interfaces
+│   ├── pipes/
+│   │   └── status-label.pipe.ts # Status formatting pipe
+│   ├── services/                 # Enhanced LocalStorage services
+│   │   ├── app-settings.service.ts      # Application settings management
+│   │   ├── recycle-bin.service.ts       # Deleted tasks management
+│   │   ├── auto-save.service.ts         # Debounced auto-save
+│   │   ├── storage-sync.service.ts      # Multi-tab synchronization
+│   │   ├── storage-migration.service.ts # Data format migrations
+│   │   └── index.ts                     # Service exports
+│   └── utils/
+│       ├── generate-sample-data.ts
+│       └── storage.utils.ts
+```
+
+## Technologies Used
+
+- **Angular 17** - Frontend framework
+- **Bootstrap 5** - UI components and styling
+- **TypeScript** - Type safety
+- **RxJS** - Reactive programming
+- **ngx-toastr** - Toast notifications
+
+## Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests if applicable
+5. Submit a pull request
+
+## License
+
+This project is licensed under the MIT License.

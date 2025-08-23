@@ -17,11 +17,11 @@
               formControlName="title"
               placeholder="Enter title"
               [class.is-invalid]="taskForm.get('title')?.invalid && taskForm.get('title')?.touched"/>
-            <div *ngIf="taskForm.get('title')?.invalid && taskForm.get('title')?.touched" class="invalid-feedback">
-              <div *ngIf="taskForm.get('title')?.errors?.['required']">Title is required</div>
-              <div *ngIf="taskForm.get('title')?.errors?.['minlength']">Title must be at least 3 characters</div>
-              <div *ngIf="taskForm.get('title')?.errors?.['maxlength']">Title must not exceed 120 characters</div>
-            </div>
+            <ng-template appFormValidator [appFormValidator]="taskForm.get('title')" [fieldName]="'Title'" let-errors>
+              <div class="invalid-feedback" *ngFor="let error of errors">
+                {{ error }}
+              </div>
+            </ng-template>
           </div>
           <div class="form-group">
             <label for="description">Description</label>
@@ -35,20 +35,17 @@
           <div class="form-group">
             <label for="status">Status</label>
             <select class="form-control" id="status" formControlName="status">
-              <option value="todo">To Do</option>
-              <option value="in_progress">In Progress</option>
-              <option value="code_review">Code Review</option>
-              <option value="test_ready">Test Ready</option>
-              <option value="finished">Finished</option>
+              <option *ngFor="let status of statusOptions" [value]="status.value">
+                {{ status.label }}
+              </option>
             </select>
           </div>
           <div class="form-group">
             <label for="priority">Priority</label>
             <select class="form-control" id="priority" formControlName="priority">
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-              <option value="urgent">Urgent</option>
+              <option *ngFor="let priority of priorityOptions" [value]="priority.value">
+                {{ priority.label }}
+              </option>
             </select>
           </div>
           <div class="form-group">
@@ -69,10 +66,31 @@
               id="dueDate"
               class="form-control"
               formControlName="due_date"/>
+            <ng-template appFormValidator [appFormValidator]="taskForm.get('due_date')" [fieldName]="'Due Date'" let-errors>
+              <div class="invalid-feedback" *ngFor="let error of errors">
+                {{ error }}
+              </div>
+            </ng-template>
             <div *ngIf="taskForm.get('due_date')?.value && isTaskOverdue(taskForm.get('due_date')?.value, taskForm.get('status')?.value)" 
                  class="text-danger mt-1 small">
               <i class="fas fa-exclamation-triangle"></i> This task is overdue
             </div>
+          </div>
+          <div class="form-group">
+            <label for="points">Points</label>
+            <input
+              type="number"
+              id="points"
+              class="form-control"
+              formControlName="points"
+              placeholder="Enter points"
+              min="0"
+              [class.is-invalid]="taskForm.get('points')?.invalid && taskForm.get('points')?.touched"/>
+            <ng-template appFormValidator [appFormValidator]="taskForm.get('points')" [fieldName]="'Points'" let-errors>
+              <div class="invalid-feedback" *ngFor="let error of errors">
+                {{ error }}
+              </div>
+            </ng-template>
           </div>
         </div>
         <div class="modal-footer">

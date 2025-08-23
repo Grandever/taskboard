@@ -1,0 +1,217 @@
+<!-- Advanced Filter Panel -->
+<div class="advanced-filter-panel">
+  <!-- Filter Panel Header -->
+  <div class="filter-header" (click)="togglePanel()">
+    <div class="d-flex align-items-center justify-content-between">
+      <div class="d-flex align-items-center">
+        <i class="bi bi-funnel me-2"></i>
+        <span class="filter-title">Advanced Filters</span>
+        <span *ngIf="activeFiltersCount > 0" class="badge bg-primary ms-2">
+          {{ activeFiltersCount }}
+        </span>
+      </div>
+      <div class="d-flex align-items-center gap-2">
+        <button *ngIf="activeFiltersCount > 0" 
+                class="btn btn-sm btn-outline-secondary"
+                (click)="onClearFilters(); $event.stopPropagation()">
+          <i class="bi bi-x-circle me-1"></i>Clear All
+        </button>
+        <i class="bi" [ngClass]="isCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Panel Content -->
+  <div class="filter-content" [class.collapsed]="isCollapsed">
+    <div class="row g-3">
+      
+      <!-- Search Filter -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-search me-2"></i>Search
+        </label>
+        <input type="text" 
+               class="form-control" 
+               placeholder="Search tasks..." 
+               [(ngModel)]="localFilters.search"
+               (ngModelChange)="onFiltersChange()">
+      </div>
+
+      <!-- Only Overdue -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-exclamation-triangle me-2"></i>Special Filters
+        </label>
+        <div class="form-check">
+          <input class="form-check-input" 
+                 type="checkbox" 
+                 id="onlyOverdue"
+                 [checked]="localFilters.onlyOverdue"
+                 (change)="toggleOverdue()">
+          <label class="form-check-label" for="onlyOverdue">
+            Only Overdue Tasks
+          </label>
+        </div>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-list-check me-2"></i>Status
+          <span *ngIf="getSelectedStatusCount() > 0" class="text-muted ms-1">
+            ({{ getSelectedStatusCount() }} selected)
+          </span>
+        </label>
+        <div class="filter-chips">
+          <div *ngFor="let status of statusOptions" 
+               class="form-check form-check-inline">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   [id]="'status-' + status.value"
+                   [checked]="isStatusSelected(status.value)"
+                   (change)="toggleStatus(status.value)">
+            <label class="form-check-label chip" 
+                   [for]="'status-' + status.value"
+                   [class.selected]="isStatusSelected(status.value)">
+              <i class="bi" [ngClass]="status.icon"></i>
+              {{ status.label }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Priority Filter -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-flag me-2"></i>Priority
+          <span *ngIf="getSelectedPriorityCount() > 0" class="text-muted ms-1">
+            ({{ getSelectedPriorityCount() }} selected)
+          </span>
+        </label>
+        <div class="filter-chips">
+          <div *ngFor="let priority of priorityOptions" 
+               class="form-check form-check-inline">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   [id]="'priority-' + priority.value"
+                   [checked]="isPrioritySelected(priority.value)"
+                   (change)="togglePriority(priority.value)">
+            <label class="form-check-label chip priority-chip" 
+                   [for]="'priority-' + priority.value"
+                   [class.selected]="isPrioritySelected(priority.value)">
+              <span class="badge me-1" [ngClass]="getPriorityBadgeClass(priority.value)">
+                {{ priority.value }}
+              </span>
+              {{ priority.label }}
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Assignee Filter -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-person me-2"></i>Assignee
+          <span *ngIf="getSelectedAssigneeCount() > 0" class="text-muted ms-1">
+            ({{ getSelectedAssigneeCount() }} selected)
+          </span>
+        </label>
+        <div class="assignee-filter">
+          <div *ngFor="let assignee of assigneeOptions" 
+               class="form-check">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   [id]="'assignee-' + assignee.id"
+                   [checked]="assignee.selected"
+                   (change)="toggleAssignee(assignee.id)">
+            <label class="form-check-label assignee-label" 
+                   [for]="'assignee-' + assignee.id">
+              <div class="d-flex align-items-center">
+                <div class="assignee-avatar me-2">
+                  <img *ngIf="assignee.avatar" 
+                       [src]="assignee.avatar" 
+                       [alt]="assignee.name"
+                       class="rounded-circle">
+                  <div *ngIf="!assignee.avatar" 
+                       class="avatar-placeholder rounded-circle">
+                    {{ assignee.name.charAt(0) }}
+                  </div>
+                </div>
+                <div>
+                  <div class="assignee-name">{{ assignee.name }}</div>
+                </div>
+              </div>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Date Range Filter -->
+      <div class="col-md-6">
+        <label class="form-label fw-bold">
+          <i class="bi bi-calendar-range me-2"></i>Due Date Range
+        </label>
+        
+        <!-- Date Presets -->
+        <div class="date-presets mb-2">
+          <button *ngFor="let preset of datePresets"
+                  class="btn btn-sm btn-outline-secondary me-1 mb-1"
+                  (click)="setDatePreset(preset.value)">
+            {{ preset.label }}
+          </button>
+        </div>
+
+        <!-- Custom Date Range -->
+        <div class="row g-2">
+          <div class="col-6">
+            <input type="date" 
+                   class="form-control form-control-sm" 
+                   placeholder="From"
+                   [ngModel]="localFilters.due_date_range?.from"
+                   (ngModelChange)="onDateRangeChange()">
+          </div>
+          <div class="col-6">
+            <input type="date" 
+                   class="form-control form-control-sm" 
+                   placeholder="To"
+                   [ngModel]="localFilters.due_date_range?.to"
+                   (ngModelChange)="onDateRangeChange()">
+          </div>
+        </div>
+      </div>
+
+      <!-- Tags Filter -->
+      <div class="col-12">
+        <label class="form-label fw-bold">
+          <i class="bi bi-tags me-2"></i>Tags
+          <span *ngIf="getSelectedTagsCount() > 0" class="text-muted ms-1">
+            ({{ getSelectedTagsCount() }} selected)
+          </span>
+        </label>
+        <div class="tags-filter">
+          <div *ngFor="let tag of tagOptions" 
+               class="form-check form-check-inline">
+            <input class="form-check-input" 
+                   type="checkbox" 
+                   [id]="'tag-' + tag.value"
+                   [checked]="tag.selected"
+                   (change)="toggleTag(tag.value)">
+            <label class="form-check-label tag-chip" 
+                   [for]="'tag-' + tag.value"
+                   [class.selected]="tag.selected"
+                   [style.border-color]="tag.color">
+              <span class="tag-color" [style.background-color]="tag.color"></span>
+              {{ tag.label }}
+            </label>
+          </div>
+          
+          <!-- No tags message -->
+          <div *ngIf="tagOptions.length === 0" class="text-muted fst-italic">
+            No tags available
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
