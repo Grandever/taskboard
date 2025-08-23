@@ -1,5 +1,5 @@
 // task-table.ts
-import { Component, OnInit, OnDestroy, HostListener, inject } from '@angular/core';
+import { Component, OnInit, OnDestroy, HostListener, inject, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Task, User } from '../../models/task.interfaces';
@@ -13,6 +13,7 @@ import { ControlsPanelComponent } from '../controls-panel/controls-panel';
 import { TaskDetail } from '../task-detail/task-detail';
 import { TaskForm } from '../task-form/task-form';
 import { ActivatedRoute, Params, Router } from '@angular/router';
+import { ElementRef } from '@angular/core';
 import { StatusLabelPipe } from '../../pipes/status-label.pipe';
 import { TaskStatus, TaskPriority, TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS } from '../../models/task.enums';
 import { AdvancedFilters } from '../../models/filter.interfaces';
@@ -34,6 +35,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
     WipWarningComponent,
     ControlsPanelComponent,
     TaskDetail,
+    TaskForm,
     StatusLabelPipe
   ]
 })
@@ -54,6 +56,9 @@ export class TaskTableComponent implements OnInit, OnDestroy {
   showTaskDetail: boolean = false;
   showAdvancedFilters: boolean = false;
   showDataGenerator: boolean = false;
+
+  // ===== VIEWCHILD =====
+  @ViewChild('taskForm', { static: false }) taskFormRef!: ElementRef;
 
   // ===== PAGINATION =====
   currentPage: number = 1;
@@ -296,6 +301,26 @@ export class TaskTableComponent implements OnInit, OnDestroy {
       this.applyFilterSortAndPaginate();
     }
     this.closeTaskDetail();
+  }
+
+  onTaskAdded(task: Task): void {
+    // Add the new task to the list
+    this.tasks.unshift(task);
+    this.applyFilterSortAndPaginate();
+    this.selectedTask = null; // Clear selected task
+  }
+
+  addNewTask(): void {
+    this.selectedTask = null; // Clear any selected task to show add form
+    // Open the modal
+    setTimeout(() => {
+      if (this.taskFormRef) {
+        const taskFormComponent = this.taskFormRef as any;
+        if (taskFormComponent.openModal) {
+          taskFormComponent.openModal();
+        }
+      }
+    }, 100);
   }
 
   // ===== FILTERING & SORTING =====

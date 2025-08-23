@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { 
@@ -9,14 +9,29 @@ import {
   StorageMigrationService 
 } from '../../services';
 import { Task } from '../../models/task.interfaces';
+import { TaskForm } from '../task-form/task-form';
 
 @Component({
   selector: 'storage-demo',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, TaskForm],
   template: `
+    <!-- Task Form for Add/Edit -->
+    <task-form
+      #taskForm
+      [taskToEdit]="selectedTask"
+      (taskAdded)="onTaskAdded($event)"
+      (taskUpdated)="onTaskUpdated($event)"
+    ></task-form>
+
     <div class="container mt-4">
-      <h2>LocalStorage Funksionalligi Demo</h2>
+      <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="mb-0">LocalStorage Funksionalligi Demo</h2>
+        <button class="btn btn-primary" (click)="addNewTask()">
+          <i class="bi bi-plus-circle me-2"></i>
+          Add New Task
+        </button>
+      </div>
       
              <!-- App Settings -->
        <div class="card mb-4">
@@ -285,6 +300,12 @@ export class StorageDemoComponent implements OnInit, OnDestroy {
   
   storageInfo = { used: 0, available: 0, percentage: 0 };
 
+  // TaskForm state
+  selectedTask: Task | null = null;
+
+  // ===== VIEWCHILD =====
+  @ViewChild('taskForm', { static: false }) taskFormRef!: ElementRef;
+
   constructor(
     private settingsService: AppSettingsService,
     private recycleBinService: RecycleBinService,
@@ -486,5 +507,29 @@ export class StorageDemoComponent implements OnInit, OnDestroy {
     // This would need to be implemented in storage.utils.ts
     // For now, we'll use a placeholder
     this.storageInfo = { used: 1024 * 1024, available: 4 * 1024 * 1024, percentage: 20 };
+  }
+
+  // TaskForm methods
+  onTaskAdded(task: Task): void {
+    // Task added successfully
+    console.log('New task added:', task);
+  }
+
+  onTaskUpdated(task: Task): void {
+    // Task updated successfully
+    console.log('Task updated:', task);
+  }
+
+  addNewTask(): void {
+    this.selectedTask = null; // Clear any selected task to show add form
+    // Open the modal
+    setTimeout(() => {
+      if (this.taskFormRef) {
+        const taskFormComponent = this.taskFormRef as any;
+        if (taskFormComponent.openModal) {
+          taskFormComponent.openModal();
+        }
+      }
+    }, 100);
   }
 }

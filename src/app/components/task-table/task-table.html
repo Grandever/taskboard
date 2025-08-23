@@ -1,5 +1,12 @@
 <!-- Task Table Component -->
 <div class="card p-3">
+  <!-- Task Form for Add/Edit -->
+  <task-form
+    #taskForm
+    [taskToEdit]="selectedTask"
+    (taskAdded)="onTaskAdded($event)"
+    (taskUpdated)="onTaskUpdated($event)"
+  ></task-form>
   <!-- WIP Warning -->
   <app-wip-warning 
     [wipCount]="wipCount"
@@ -15,6 +22,15 @@
     (filtersChanged)="onFiltersChanged($event)"
     (clearFilters)="onClearFilters()">
   </app-controls-panel>
+
+  <!-- Add New Task Button -->
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h5 class="mb-0">Task Table</h5>
+    <button class="btn btn-primary" (click)="addNewTask()">
+      <i class="bi bi-plus-circle me-2"></i>
+      Add New Task
+    </button>
+  </div>
 
   <!-- Bulk Actions -->
   <app-bulk-actions
