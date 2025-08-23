@@ -14,6 +14,7 @@ export class Paginator {
   @Input() currentPage: number = 1;
   @Input() totalItems: number = 0;
   @Input() itemsPerPage: number = 10;
+  @Input() loading: boolean = false;
   @Output() pageChange = new EventEmitter<number>();
   @Output() pageSizeChange = new EventEmitter<number>();
 
@@ -74,6 +75,42 @@ export class Paginator {
   onPageChange() {
     if (this.currentPage >= 1 && this.currentPage <= this.totalPages) {
       this.pageChange.emit(this.currentPage);
+    }
+  }
+
+  // Keyboard navigation support
+  onKeyDown(event: KeyboardEvent, action: string): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      switch (action) {
+        case 'first':
+          this.goToFirst();
+          break;
+        case 'prev':
+          this.goToPrev();
+          break;
+        case 'next':
+          this.goToNext();
+          break;
+        case 'last':
+          this.goToLast();
+          break;
+      }
+    }
+  }
+
+  // Accessibility helpers
+  getPageLabel(page: number): string {
+    return `Page ${page}`;
+  }
+
+  getNavigationLabel(action: string): string {
+    switch (action) {
+      case 'first': return 'Go to first page';
+      case 'prev': return 'Go to previous page';
+      case 'next': return 'Go to next page';
+      case 'last': return 'Go to last page';
+      default: return '';
     }
   }
 }

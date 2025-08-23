@@ -57,15 +57,22 @@ export class TaskDetail implements OnInit {
   ngOnInit(): void {
     // If embedded with direct input, prefer that; otherwise fall back to route param
     if (this.taskInput) {
+      console.log('Task detail: Using taskInput', this.taskInput);
       this.taskDetails = this.taskInput;
+      this.initializeEditingValues();
     } else {
       this.route.paramMap.subscribe((paramMap) => {
         this.taskId = paramMap.get('id');
+        console.log('Task detail: Loading from route, taskId:', this.taskId);
         if (this.taskId) {
           const storedTasks = localStorage.getItem('taskboard/v1/tasks');
           if (storedTasks) {
             const tasks: Task[] = JSON.parse(storedTasks);
             this.taskDetails = tasks.find(task => task.id === this.taskId) || null;
+            console.log('Task detail: Found task', this.taskDetails);
+            if (this.taskDetails) {
+              this.initializeEditingValues();
+            }
           }
         }
       });
@@ -95,6 +102,17 @@ export class TaskDetail implements OnInit {
     this.close.emit();
   }
 
+  private initializeEditingValues(): void {
+    if (this.taskDetails) {
+      this.editingStatusValue = this.taskDetails.status || '';
+      this.editingPriorityValue = this.taskDetails.priority || '';
+      this.editingTitleValue = this.taskDetails.title || '';
+      this.editingPointsValue = this.taskDetails.points || 0;
+      this.editingDescriptionValue = this.taskDetails.description || '';
+      this.editingDueDateValue = this.taskDetails.due_date || '';
+    }
+  }
+ 
   // Open the TaskForm component in edit mode
   editTask(): void {
     if (this.taskFormComponent) {

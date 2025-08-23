@@ -4,12 +4,25 @@
   (taskUpdated)="onTaskUpdated($event)"
 ></task-form>
 
+<!-- Task Detail Panel - Fixed Left Side Overlay -->
+<div *ngIf="detailOpen && selectedTask" class="task-detail-panel">
+  <app-task-detail 
+    [taskInput]="selectedTask" 
+    (close)="closeTaskDetail()" 
+    (prev)="onPrev()" 
+    (next)="onNext()">
+  </app-task-detail>
+</div>
+
+<!-- Overlay -->
+<div *ngIf="detailOpen" class="task-detail-overlay" (click)="closeTaskDetail()"></div>
+
 <!-- Skeleton loading for board -->
 <div *ngIf="loading" class="d-flex position-relative" style="gap: 16px;">
   <div class="board-grid" style="width: 100%">
-    <div class="column highlighted" *ngFor="let i of [1,2,3,4,5]">
+    <div class="column" *ngFor="let i of [1,2,3,4,5]">
       <div class="column-header">
-        <span><i class="fas fa-clipboard-list me-2"></i>Loading...</span>
+        <span><i class="bi bi-list-task me-2"></i>Loading...</span>
         <span class="task-count">0</span>
       </div>
       <div class="task-card skeleton-task" *ngFor="let j of [1,2,3]">
@@ -20,67 +33,66 @@
   </div>
 </div>
 
-<!-- Pagination Summary -->
-
-
 <!-- Actual board -->
-<div *ngIf="!loading" class="d-flex position-relative" style="gap: 16px;">
-  <div class="board-grid" [style.width]="detailOpen ? '50%' : '100%'">
-  <!-- Loop through Columns -->
-  <div
-    class="column highlighted" *ngFor="let column of columns"
-    (dragover)="onDragOver($event)"
-    (drop)="onDrop(column.name, $event)"
-  >
-    <div class="column-header">
-      <span><i class="fas fa-{{ column.icon }} me-2"></i>{{ column.title }}</span>
-      <span class="task-count">{{ column.tasks.length }}</span>
-    </div>
+<div *ngIf="!loading" class="board-container" [class.board-with-detail]="detailOpen">
+  <div class="board-content">
+    <div class="board-grid">
+      <!-- Loop through Columns -->
+      <div
+        class="column highlighted" *ngFor="let column of columns"
+        (dragover)="onDragOver($event)"
+        (drop)="onDrop(column.name, $event)"
+      >
+        <div class="column-header">
+          <span><i class="fas fa-{{ column.icon }} me-2"></i>{{ column.title }}</span>
+          <span class="task-count">{{ column.tasks.length }}</span>
+        </div>
 
-    <!-- Display Tasks -->
-    <div
-      *ngFor="let task of column.tasks"
-      class="task-card"
-      [ngClass]="getPriorityClass(task.priority)"
-      draggable="true"
-      (dragstart)="onDragStart(task)"
-      (dragend)="onDragEnd()"
-      (dblclick)="editTask(task)"
-      style="border: #00b8d9 1px solid; cursor: pointer;"
-      (click)="openTaskDetail(task)"
-    >
-      <div class="task-title d-flex align-items-center justify-content-between">
-        <span class="me-2">{{ task.title }}</span>
-        <img *ngIf="task.assignee" [src]="'https://api.dicebear.com/7.x/identicon/svg?seed=' + task.assignee" width="20" height="20" class="rounded-circle" alt="assignee" />
-      </div>
-      <div class="task-meta">
-        <span>Priority: {{ task.priority | titlecase }}</span>
-        <span>Due: {{ task.due_date || 'None' }}</span>
-      </div>
-    </div>
+        <!-- Column Body - Scrollable -->
+        <div class="column-body">
+          <!-- Display Tasks -->
+          <div
+            *ngFor="let task of column.tasks"
+            class="task-card"
+            [ngClass]="getPriorityClass(task.priority)"
+            draggable="true"
+            (dragstart)="onDragStart(task)"
+            (dragend)="onDragEnd()"
+            (dblclick)="editTask(task)"
+            style="border: #00b8d9 1px solid; cursor: pointer;"
+            (click)="openTaskDetail(task)"
+          >
+            <div class="task-title d-flex align-items-center justify-content-between">
+              <span class="me-2">{{ task.title }}</span>
+              <img *ngIf="task.assignee" [src]="'https://api.dicebear.com/7.x/identicon/svg?seed=' + task.assignee" width="20" height="20" class="rounded-circle" alt="assignee" />
+            </div>
+            <div class="task-meta">
+              <span>Priority: {{ task.priority | titlecase }}</span>
+              <span>Due: {{ task.due_date || 'None' }}</span>
+            </div>
+          </div>
 
-    <!-- Empty State -->
-    <div *ngIf="column.tasks.length === 0" class="empty-placeholder">
-      <i>No tasks available in this column</i>
+          <!-- Empty State -->
+          <div *ngIf="column.tasks.length === 0" class="empty-placeholder">
+            <i>No tasks available in this column</i>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-  </div>
-  <!-- Task Detail Panel -->
-  <div *ngIf="detailOpen && selectedTask" class="task-detail-panel" style="width: 50%; min-width: 360px;">
-    <app-task-detail 
-      [taskInput]="selectedTask" 
-      (close)="closeTaskDetail()" 
-      (prev)="onPrev()" 
-      (next)="onNext()">
-    </app-task-detail>
   </div>
   
-  <!-- Overlay -->
-  <div *ngIf="detailOpen" class="task-detail-overlay" (click)="closeTaskDetail()"></div>
+  <!-- No Records Found - Board Level -->
+  <div *ngIf="!loading && (!columns || columns.length === 0 || totalItems === 0)" class="board-no-records">
+    <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5" style="min-height: 400px;">
+      <i class="bi bi-inbox fs-1 mb-3"></i>
+      <div class="fs-5">No Records Found</div>
+      <div class="text-muted mt-2">No tasks available to display on the board</div>
+    </div>
+  </div>
 </div>
 
-<!-- Pagination -->
-<div *ngIf="!loading && totalItems > 0" class="mt-4">
+<!-- Pagination - Fixed at bottom -->
+<div *ngIf="!loading && totalItems > 0" class="mt-auto pt-3">
   <app-paginator
     [currentPage]="currentPage"
     [itemsPerPage]="itemsPerPage"

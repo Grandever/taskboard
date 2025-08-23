@@ -1,0 +1,100 @@
+/* Bulk Actions Styles */
+.bulk-actions-bar {
+  background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-200) 100%);
+  border: 1px solid var(--card-border) !important;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  color: var(--text-primary);
+}
+
+.bulk-actions-bar .dropdown-menu {
+  max-height: 300px;
+  overflow-y: auto;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
+}
+
+.bulk-actions-bar .dropdown-item {
+  padding: 0.5rem 1rem;
+  transition: background-color 0.2s ease;
+  color: var(--text-primary);
+}
+
+.bulk-actions-bar .dropdown-item:hover {
+  background-color: var(--neutral-100);
+}
+
+.bulk-selection-info {
+  color: var(--text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+/* ===== DARK MODE STYLES ===== */
+
+/* Dark mode bulk actions */
+.dark-mode .bulk-actions-bar {
+  background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-200) 100%) !important;
+  border: 1px solid var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .bulk-actions-bar .dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+.dark-mode .bulk-actions-bar .dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .bulk-actions-bar .dropdown-item:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+.dark-mode .bulk-selection-info {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode buttons */
+.dark-mode .btn-outline-primary {
+  border-color: var(--primary-400) !important;
+  color: var(--primary-400) !important;
+}
+
+.dark-mode .btn-outline-primary:hover {
+  background-color: var(--primary-500) !important;
+  border-color: var(--primary-500) !important;
+  color: white !important;
+}
+
+.dark-mode .btn-outline-danger {
+  border-color: var(--danger-500) !important;
+  color: var(--danger-500) !important;
+}
+
+.dark-mode .btn-outline-danger:hover {
+  background-color: var(--danger-500) !important;
+  border-color: var(--danger-500) !important;
+  color: white !important;
+}
+
+.dark-mode .btn-outline-warning {
+  border-color: var(--warning-500) !important;
+  color: var(--warning-500) !important;
+}
+
+.dark-mode .btn-outline-warning:hover {
+  background-color: var(--warning-500) !important;
+  border-color: var(--warning-500) !important;
+  color: var(--neutral-900) !important;
+}
+
+/* Dark mode badges */
+.dark-mode .badge.bg-primary {
+  background-color: var(--primary-500) !important;
+  color: white !important;
+}
+
+.dark-mode .badge.bg-secondary {
+  background-color: var(--neutral-500) !important;
+  color: var(--text-primary) !important;
+}

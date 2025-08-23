@@ -1,0 +1,49 @@
+<!-- Bulk Actions Bar -->
+<div *ngIf="showBulkActions" class="bulk-actions-bar mb-3 p-3 border rounded">
+  <div class="d-flex justify-content-between align-items-center">
+    <div class="d-flex align-items-center">
+      <span class="me-3 bulk-selection-info">
+        <i class="bi bi-check-circle-fill text-primary me-2"></i>
+        {{ selectedTasks.size }} task{{ selectedTasks.size > 1 ? 's' : '' }} selected
+      </span>
+      <button class="btn btn-sm btn-outline-secondary me-2" (click)="onClearSelection()">
+        <i class="bi bi-x-circle me-1"></i>Clear
+      </button>
+    </div>
+    <div class="d-flex gap-2">
+      <!-- Status Update Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="bi bi-arrow-repeat me-1"></i>Update Status
+        </button>
+        <ul class="dropdown-menu">
+          <li *ngFor="let status of statusOptions">
+            <a class="dropdown-item" href="#" (click)="onBulkUpdateStatus(status.value); $event.preventDefault()">
+              <i class="bi" [ngClass]="status.icon"></i> {{ status.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Priority Update Dropdown -->
+      <div class="dropdown">
+        <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
+          <i class="bi bi-flag me-1"></i>Update Priority
+        </button>
+        <ul class="dropdown-menu">
+          <li *ngFor="let priority of priorityOptions">
+            <a class="dropdown-item" href="#" (click)="onBulkUpdatePriority(priority.value); $event.preventDefault()">
+              <span class="badge me-2" [ngClass]="getPriorityBadgeClass(priority.value)">{{ priority.value }}</span>
+              {{ priority.label }}
+            </a>
+          </li>
+        </ul>
+      </div>
+      
+      <!-- Bulk Delete -->
+      <button class="btn btn-sm btn-outline-danger" (click)="onBulkDelete()">
+        <i class="bi bi-trash me-1"></i>Delete Selected
+      </button>
+    </div>
+  </div>
+</div>

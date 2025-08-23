@@ -1,12 +1,16 @@
+/* Import design system */
+@import './styles/variables.css';
+@import './styles/utilities.css';
+
 /* You can add global styles to this file, and also import other style files */
 .element-selector {
-  color: #0747A6; /* Jira Software blue */
+  color: var(--primary-600);
 }
 .column-header i,
 .empty-placeholder i,
 .menu-icon i,
 .card-footer .card-type i {
-  color: #0747A6; /* Jira Software blue */
+  color: var(--primary-600);
 }
 
 p-sidebar {
@@ -24,11 +28,11 @@ p-sidebar ul li {
 
 p-sidebar ul li a {
   text-decoration: none;
-  color: #555; /* Customize link color */
+  color: var(--neutral-600);
 }
 
 p-sidebar ul li a:hover {
-  color: #0747A6; /* Add hover effect */
+  color: var(--primary-600);
 }
 
 button {
@@ -46,26 +50,26 @@ button {
 }
 
 .toast {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border-radius: 6px !important;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+  background-color: var(--bg-white) !important;
+  color: var(--neutral-900) !important;
+  border-radius: var(--border-radius) !important;
+  box-shadow: var(--shadow-md) !important;
   border: none !important;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  font-family: var(--font-family-base) !important;
   min-width: 300px !important;
 }
 
 /* Faqat 2 turdagi toastr */
 .toast-success {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  padding: 10px;
+  background-color: var(--bg-white) !important;
+  color: var(--neutral-900) !important;
+  padding: var(--spacing-3);
 }
 
 .toast-error {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  border-left: 4px solid #dc3545 !important;
+  background-color: var(--bg-white) !important;
+  color: var(--neutral-900) !important;
+  border-left: var(--border-width-4) solid var(--danger-500) !important;
 }
 
 /* Rasmdagidek checkmark ikonka */
@@ -74,13 +78,13 @@ button {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-color: #28a745;
+  background-color: var(--success-500);
   color: white;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   text-align: center;
   line-height: 20px;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   flex-shrink: 0 !important;
 }
 
@@ -90,13 +94,13 @@ button {
   display: inline-block;
   width: 20px;
   height: 20px;
-  background-color: #dc3545;
+  background-color: var(--danger-500);
   color: white;
-  border-radius: 50%;
+  border-radius: var(--border-radius-full);
   text-align: center;
   line-height: 20px;
-  font-size: 12px;
-  font-weight: bold;
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-bold);
   flex-shrink: 0 !important;
 }
 
@@ -133,6 +137,205 @@ button {
 
 .toast-error .toast-progress {
   background-color: #dc3545 !important;
+}
+
+/* ===== DARK MODE GLOBAL STYLES ===== */
+.dark-mode {
+  background-color: var(--body-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode body */
+.dark-mode body {
+  background-color: var(--body-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode cards */
+.dark-mode .card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode navbar */
+.dark-mode .navbar {
+  background-color: var(--header-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .navbar-brand,
+.dark-mode .navbar-nav .nav-link {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode form controls */
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-500) !important;
+  color: var(--input-text) !important;
+}
+
+/* Dark mode buttons */
+.dark-mode .btn-outline-light {
+  color: var(--text-primary) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .btn-outline-light:hover {
+  background-color: var(--neutral-200) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode tables */
+.dark-mode .table {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .table thead th {
+  background-color: var(--table-header-bg) !important;
+  border-color: var(--table-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .table tbody tr {
+  background-color: var(--table-row-bg) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-mode .table tbody tr:hover {
+  background-color: var(--table-row-hover) !important;
+}
+
+.dark-mode .table tbody td {
+  border-color: var(--table-border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode table specific elements */
+.dark-mode .table-header {
+  background-color: var(--table-header-bg) !important;
+  border-bottom-color: var(--table-border) !important;
+}
+
+.dark-mode .table-header th {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .filter-row {
+  background-color: var(--neutral-100) !important;
+  border-bottom-color: var(--table-border) !important;
+}
+
+.dark-mode .filter-row th {
+  background-color: var(--neutral-100) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .custom-table {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .custom-table tbody tr {
+  background-color: var(--table-row-bg) !important;
+  border-bottom-color: var(--table-border) !important;
+}
+
+.dark-mode .custom-table tbody tr:hover {
+  background-color: var(--table-row-hover) !important;
+}
+
+.dark-mode .custom-table tbody td {
+  color: var(--text-primary) !important;
+  border-bottom-color: var(--table-border) !important;
+}
+
+/* Dark mode dropdowns */
+.dark-mode .dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: var(--neutral-200) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode modals */
+.dark-mode .modal-content {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .modal-header {
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .modal-footer {
+  border-color: var(--card-border) !important;
+}
+
+/* Dark mode accordion */
+.dark-mode .accordion-item {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .accordion-button {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .accordion-button:not(.collapsed) {
+  background-color: var(--primary-50) !important;
+  color: var(--primary-700) !important;
+}
+
+.dark-mode .accordion-body {
+  background-color: var(--neutral-25) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode badges */
+.dark-mode .badge.bg-secondary {
+  background-color: var(--neutral-500) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode text utilities */
+.dark-mode .text-muted {
+  color: var(--text-muted) !important;
+}
+
+/* Dark mode borders */
+.dark-mode .border {
+  border-color: var(--card-border) !important;
+}
+
+/* Dark mode shadows */
+.dark-mode .shadow-sm {
+  box-shadow: var(--shadow-sm) !important;
+}
+
+.dark-mode .shadow {
+  box-shadow: var(--shadow) !important;
+}
+
+.dark-mode .shadow-md {
+  box-shadow: var(--shadow-md) !important;
 }
 
 

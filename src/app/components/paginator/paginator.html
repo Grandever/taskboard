@@ -1,6 +1,6 @@
 <!-- paginator.component.html -->
-<div class="paginator-container">
-  <div class="paginator-info p-2">
+<div class="paginator-container" [class.loading]="loading">
+  <div class="paginator-info">
     <strong>Total: {{totalItems}}</strong>
   </div>
   
@@ -32,33 +32,48 @@
       <!-- Birinchi sahifaga o'tish -->
      <!-- Birinchi sahifa -->
     <li class="page-item" [class.disabled]="currentPage === 1">
-      <a class="page-link" (click)="goToFirst()" aria-label="First">
+      <a class="page-link" 
+         (click)="goToFirst()" 
+         (keydown)="onKeyDown($event, 'first')"
+         [attr.aria-label]="getNavigationLabel('first')"
+         tabindex="0"
+         role="button">
         <i class="bi bi-chevron-double-left"></i>
       </a>
     </li>
 
     <!-- Oldingi sahifa -->
     <li class="page-item" [class.disabled]="currentPage === 1">
-      <a class="page-link" (click)="goToPrev()" aria-label="Previous">
+      <a class="page-link" 
+         (click)="goToPrev()" 
+         (keydown)="onKeyDown($event, 'prev')"
+         [attr.aria-label]="getNavigationLabel('prev')"
+         tabindex="0"
+         role="button">
         <i class="bi bi-chevron-left"></i>
       </a>
     </li>
 
-    <!-- Page number buttons -->
-    <li class="page-item" *ngFor="let page of pages" [class.active]="page === currentPage">
-      <a class="page-link" (click)="goToPage(page)">{{ page }}</a>
-    </li>
-
     <!-- Keyingi sahifa -->
     <li class="page-item" [class.disabled]="currentPage === totalPages">
-      <a class="page-link" (click)="goToNext()" aria-label="Next">
+      <a class="page-link" 
+         (click)="goToNext()" 
+         (keydown)="onKeyDown($event, 'next')"
+         [attr.aria-label]="getNavigationLabel('next')"
+         tabindex="0"
+         role="button">
         <i class="bi bi-chevron-right"></i>
       </a>
     </li>
 
     <!-- Oxirgi sahifa -->
     <li class="page-item" [class.disabled]="currentPage === totalPages">
-      <a class="page-link" (click)="goToLast()" aria-label="Last">
+      <a class="page-link" 
+         (click)="goToLast()" 
+         (keydown)="onKeyDown($event, 'last')"
+         [attr.aria-label]="getNavigationLabel('last')"
+         tabindex="0"
+         role="button">
         <i class="bi bi-chevron-double-right"></i>
       </a>
     </li>

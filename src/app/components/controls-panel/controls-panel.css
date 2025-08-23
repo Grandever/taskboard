@@ -1,0 +1,241 @@
+/* Controls Section Layout */
+.controls-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-3);
+}
+
+/* Control Card Styles */
+.control-card {
+  background: var(--card-bg);
+  border: var(--border-width) solid var(--card-border);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+  transition: all var(--transition-normal);
+}
+
+.control-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.control-header {
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+  padding: var(--spacing-3) var(--spacing-4);
+  border-bottom: var(--border-width) solid var(--primary-200);
+  font-weight: var(--font-weight-semibold);
+  color: var(--primary-700);
+  display: flex;
+  align-items: center;
+  font-size: var(--font-size-sm);
+}
+
+.control-header i {
+  font-size: var(--font-size-base);
+  color: var(--primary-600);
+}
+
+.control-body {
+  padding: var(--spacing-4);
+  background: var(--neutral-25);
+  color: var(--text-primary);
+}
+
+/* Accordion styles - smaller and more compact */
+.accordion-button:not(.collapsed) {
+  background-color: var(--primary-50);
+  color: var(--primary-700);
+  box-shadow: inset 0 -1px 0 var(--primary-200);
+}
+
+.accordion-button:focus {
+  box-shadow: 0 0 0 0.25rem var(--primary-200);
+  border-color: var(--primary-300);
+}
+
+.accordion-item {
+  border: 1px solid var(--card-border);
+  border-radius: var(--border-radius-sm);
+  margin-bottom: var(--spacing-1);
+  box-shadow: var(--shadow-xs);
+  background-color: var(--card-bg);
+}
+
+.accordion-button {
+  font-weight: var(--font-weight-semibold);
+  color: var(--text-primary);
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  transition: all 0.2s ease;
+  background-color: var(--card-bg);
+}
+
+.accordion-button:hover {
+  background-color: var(--neutral-100);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.accordion-body {
+  padding: 0.75rem 1rem;
+  background-color: var(--neutral-25);
+  color: var(--text-primary);
+}
+
+/* Make accordion icons smaller */
+.accordion-button i {
+  font-size: 0.875rem;
+  transition: transform 0.2s ease;
+}
+
+.accordion-button:not(.collapsed) i {
+  transform: rotate(180deg);
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  /* Control cards stack vertically on mobile */
+  .controls-section .col-md-6 {
+    margin-bottom: var(--spacing-3);
+  }
+  
+  .control-card {
+    margin-bottom: var(--spacing-2);
+  }
+}
+
+/* ===== DARK MODE STYLES ===== */
+
+/* Dark mode control cards */
+.dark-mode .control-card {
+  background: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+.dark-mode .control-header {
+  background: linear-gradient(135deg, var(--primary-50) 0%, var(--primary-100) 100%);
+  color: var(--primary-700);
+}
+
+.dark-mode .control-body {
+  background: var(--neutral-25) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode accordion */
+.dark-mode .accordion-item {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+.dark-mode .accordion-button {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .accordion-button:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+.dark-mode .accordion-button:not(.collapsed) {
+  background-color: var(--primary-50) !important;
+  color: var(--primary-700) !important;
+}
+
+.dark-mode .accordion-body {
+  background-color: var(--neutral-25) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode form controls */
+.dark-mode .form-control,
+.dark-mode .form-select {
+  background-color: var(--input-bg) !important;
+  border: 1px solid var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.dark-mode .form-control:focus,
+.dark-mode .form-select:focus {
+  border-color: var(--primary-400) !important;
+  color: var(--input-text) !important;
+  background-color: var(--input-bg) !important;
+}
+
+.dark-mode .form-control::placeholder,
+.dark-mode .form-select::placeholder {
+  color: var(--text-muted) !important;
+}
+
+/* Dark mode labels */
+.dark-mode label {
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode text colors */
+.dark-mode .text-muted {
+  color: var(--text-muted) !important;
+}
+
+.dark-mode .text-secondary {
+  color: var(--text-secondary) !important;
+}
+
+/* Dark mode buttons */
+.dark-mode .btn-outline-primary {
+  border-color: var(--primary-400) !important;
+  color: var(--primary-400) !important;
+}
+
+.dark-mode .btn-outline-primary:hover {
+  background-color: var(--primary-500) !important;
+  border-color: var(--primary-500) !important;
+  color: white !important;
+}
+
+.dark-mode .btn-outline-secondary {
+  border-color: var(--card-border) !important;
+  color: var(--text-secondary) !important;
+}
+
+.dark-mode .btn-outline-secondary:hover {
+  background-color: var(--neutral-200) !important;
+  border-color: var(--neutral-400) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Dark mode dropdown */
+.dark-mode .dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border: 1px solid var(--card-border) !important;
+}
+
+.dark-mode .dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+/* Dark mode badges */
+.dark-mode .badge.bg-info {
+  background-color: var(--info-500) !important;
+  color: white !important;
+}
+
+.dark-mode .badge.bg-danger {
+  background-color: var(--danger-500) !important;
+  color: white !important;
+}
+
+.dark-mode .badge.bg-warning {
+  background-color: var(--warning-500) !important;
+  color: var(--neutral-900) !important;
+}
+
+.dark-mode .badge.bg-success {
+  background-color: var(--success-500) !important;
+  color: white !important;
+}

@@ -1,0 +1,49 @@
+<!-- Top Controls Section -->
+<div class="controls-section mb-3">
+  <!-- Data Generator and Advanced Filters side by side -->
+  <div class="row">
+    <!-- Data Generator Column -->
+    <div class="col-md-6">
+      <div class="accordion" id="dataGeneratorAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="dataGeneratorHeader">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#dataGeneratorCollapse" aria-expanded="false" aria-controls="dataGeneratorCollapse">
+              <i class="bi bi-database me-2"></i>
+              Data Generator
+            </button>
+          </h2>
+          <div id="dataGeneratorCollapse" class="accordion-collapse collapse" aria-labelledby="dataGeneratorHeader" data-bs-parent="#dataGeneratorAccordion">
+            <div class="accordion-body">
+              <app-data-generator></app-data-generator>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Advanced Filter Column -->
+    <div class="col-md-6">
+      <div class="accordion" id="advancedFilterAccordion">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="advancedFilterHeader">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#advancedFilterCollapse" aria-expanded="false" aria-controls="advancedFilterCollapse">
+              <i class="bi bi-funnel me-2"></i>
+              Advanced Filters
+            </button>
+          </h2>
+          <div id="advancedFilterCollapse" class="accordion-collapse collapse" aria-labelledby="advancedFilterHeader" data-bs-parent="#advancedFilterAccordion">
+            <div class="accordion-body">
+              <app-advanced-filter 
+                [tasks]="tasks"
+                [users]="users"
+                [filters]="advancedFilters"
+                (filtersChanged)="onAdvancedFiltersChanged($event)"
+                (clearFilters)="onAdvancedFiltersClear()">
+              </app-advanced-filter>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

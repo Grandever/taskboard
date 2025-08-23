@@ -15,9 +15,6 @@
     <div class="collapse navbar-collapse" id="navbarSupportedContent">
       <ul class="navbar-nav me-auto mb-2 mb-lg-0">
         <li class="nav-item">
-          <a class="nav-link" routerLink="/board" routerLinkActive="active">Board</a>
-        </li>
-        <li class="nav-item">
           <a class="nav-link" routerLink="/table" routerLinkActive="active">Issues</a>
         </li>
         <li class="nav-item">
@@ -25,8 +22,10 @@
         </li>
       </ul>
       <form class="d-flex px-2" role="search" (submit)="$event.preventDefault()">
-        <input class="form-control me-2 bg-white text-dark" type="search" placeholder="Search by title" aria-label="Search" [ngModel]="titleSearch" name="title" (ngModelChange)="onSearchInput($event)" />
+        <input class="border-radius-10" type="search" placeholder="Search by title" aria-label="Search" [ngModel]="titleSearch" name="title" (ngModelChange)="onSearchInput($event)" />
       </form>
+      <!-- Theme Toggle Button -->
+      <app-theme-toggle class="me-2"></app-theme-toggle>
       <button type="button" class="btn btn-outline-light" data-bs-toggle="modal" data-bs-target="#exampleModalCenter">
         Add New
       </button>

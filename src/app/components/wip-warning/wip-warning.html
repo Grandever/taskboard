@@ -1,0 +1,10 @@
+<!-- WIP Limit Warning -->
+<div *ngIf="shouldShowWarning" class="wip-warning">
+  <div class="alert-heading">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>WIP Limit Warning</strong>
+  </div>
+  <div class="alert-body">
+    You have {{ wipCount }} tasks in progress (limit: {{ wipLimit }}). Consider completing some tasks before starting new ones.
+  </div>
+</div>

@@ -102,6 +102,64 @@ import { NgForOf, NgIf } from '@angular/common';
         width: 100% !important;
       }
     }
+
+    /* ===== DARK MODE STYLES ===== */
+    
+    /* Dark mode skeleton table */
+    .dark-mode .skeleton-table {
+      border-color: var(--table-border);
+      background-color: var(--table-row-bg);
+    }
+
+    /* Dark mode skeleton header */
+    .dark-mode .skeleton-header {
+      background: linear-gradient(135deg, var(--neutral-200) 0%, var(--neutral-300) 100%);
+      border-bottom-color: var(--table-border);
+    }
+
+    /* Dark mode skeleton body */
+    .dark-mode .skeleton-body {
+      background-color: var(--table-row-bg);
+    }
+
+    /* Dark mode skeleton row */
+    .dark-mode .skeleton-row {
+      border-bottom-color: var(--table-border);
+    }
+
+    /* Dark mode placeholder */
+    .dark-mode .placeholder {
+      background: linear-gradient(90deg, var(--neutral-300) 25%, var(--neutral-400) 50%, var(--neutral-300) 75%);
+      background-size: 200% 100%;
+      animation: loading-dark 1.5s infinite;
+    }
+
+    @keyframes loading-dark {
+      0% {
+        background-position: 200% 0;
+      }
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Dark mode enhanced placeholder with glow effect */
+    .dark-mode .placeholder {
+      box-shadow: 0 0 4px rgba(255, 255, 255, 0.1);
+    }
+
+    /* Dark mode responsive enhancements */
+    @media (max-width: 768px) {
+      .dark-mode .skeleton-header,
+      .dark-mode .skeleton-row {
+        flex-direction: column;
+      }
+
+      .dark-mode .skeleton-col {
+        width: 100% !important;
+        border-bottom: 1px solid var(--table-border);
+      }
+    }
   `]
 })
 export class SkeletonComponent {

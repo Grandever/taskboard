@@ -1,22 +1,24 @@
 import {Component, OnInit, ViewChild, inject} from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import {ActivatedRoute, Router, RouterLinkActive} from '@angular/router';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
 import {TaskBoard} from './components/task-board/task-board';
 import {TaskForm} from './components/task-form/task-form';
 import {RouterLink, RouterOutlet} from '@angular/router';
-import { 
-  AppSettingsService, 
-  RecycleBinService, 
-  AutoSaveService, 
-  StorageSyncService, 
-  StorageMigrationService 
+import {ThemeToggleComponent} from './components/theme-toggle/theme-toggle';
+import {
+  AppSettingsService,
+  RecycleBinService,
+  AutoSaveService,
+  StorageSyncService,
+  StorageMigrationService
 } from './services';
+import { ThemeService } from './services/theme.service';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule],
+  imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule, ThemeToggleComponent, RouterLinkActive],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })
@@ -33,12 +35,14 @@ export class App implements OnInit{
   private autoSaveService = inject(AutoSaveService);
   private storageSyncService = inject(StorageSyncService);
   private migrationService = inject(StorageMigrationService);
+  private themeService = inject(ThemeService);
 
   constructor(private route: ActivatedRoute, private router: Router) {}
 
   ngOnInit(): void {
     this.initializeServices();
     this.setupSearch();
+    this.themeService.watchSystemTheme();
   }
 
   private async initializeServices(): Promise<void> {

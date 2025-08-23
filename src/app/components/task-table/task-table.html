@@ -1,434 +1,334 @@
-<!-- task-table.html -->
+<!-- Task Table Component -->
 <div class="card p-3">
-  <!-- Data Generator Component -->
-  <app-data-generator></app-data-generator>
+  <!-- WIP Warning -->
+  <app-wip-warning 
+    [wipCount]="wipCount"
+    [wipLimit]="wipLimit"
+    [showWarning]="showWipWarning">
+  </app-wip-warning>
 
-  <!-- Advanced Filter Panel -->
-  <app-advanced-filter 
+  <!-- Controls Panel -->
+  <app-controls-panel
     [tasks]="tasks"
     [users]="users"
-    [filters]="advancedFilters"
-    (filtersChanged)="onAdvancedFiltersChanged($event)"
-    (clearFilters)="onAdvancedFiltersClear()">
-  </app-advanced-filter>
+    [advancedFilters]="advancedFilters"
+    (filtersChanged)="onFiltersChanged($event)"
+    (clearFilters)="onClearFilters()">
+  </app-controls-panel>
 
-  <!-- WIP Limit Warning -->
-  <div *ngIf="getWIPCount() > 5" class="wip-warning">
-    <div class="alert-heading">
-      <i class="bi bi-exclamation-triangle me-2"></i>
-      <strong>WIP Limit Warning</strong>
-    </div>
-    <div class="alert-body">
-      You have {{ getWIPCount() }} tasks in progress (limit: 5). Consider completing some tasks before starting new ones.
-    </div>
-  </div>
+  <!-- Bulk Actions -->
+  <app-bulk-actions
+    [selectedTasks]="selectedTasks"
+    [statusOptions]="statusOptions"
+    [priorityOptions]="priorityOptions"
+    [showBulkActions]="showBulkActions"
+    (clearSelection)="onClearSelection()"
+    (bulkUpdateStatus)="onBulkUpdateStatus($event)"
+    (bulkUpdatePriority)="onBulkUpdatePriority($event)"
+    (bulkDelete)="onBulkDelete()">
+  </app-bulk-actions>
 
-  <!-- Bulk Actions Bar -->
-  <div *ngIf="showBulkActions" class="bulk-actions-bar mb-3 p-3 bg-light border rounded">
-    <div class="d-flex justify-content-between align-items-center">
-      <div class="d-flex align-items-center">
-        <span class="me-3">
-          <i class="bi bi-check-circle-fill text-primary me-2"></i>
-          {{ selectedTasks.size }} task{{ selectedTasks.size > 1 ? 's' : '' }} selected
-        </span>
-        <button class="btn btn-sm btn-outline-secondary me-2" (click)="clearSelection()">
-          <i class="bi bi-x-circle me-1"></i>Clear
-        </button>
-      </div>
-      <div class="d-flex gap-2">
-        <!-- Status Update Dropdown -->
-        <div class="dropdown">
-          <button class="btn btn-sm btn-outline-primary dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-arrow-repeat me-1"></i>Update Status
-          </button>
-          <ul class="dropdown-menu">
-            <li *ngFor="let status of statusOptions">
-              <a class="dropdown-item" href="#" (click)="bulkUpdateStatus(status.value); $event.preventDefault()">
-                <i class="bi" [ngClass]="status.icon"></i> {{ status.label }}
-              </a>
-            </li>
-          </ul>
-        </div>
-        
-        <!-- Priority Update Dropdown -->
-        <div class="dropdown">
-          <button class="btn btn-sm btn-outline-warning dropdown-toggle" type="button" data-bs-toggle="dropdown">
-            <i class="bi bi-flag me-1"></i>Update Priority
-          </button>
-          <ul class="dropdown-menu">
-            <li *ngFor="let priority of priorityOptions">
-              <a class="dropdown-item" href="#" (click)="bulkUpdatePriority(priority.value); $event.preventDefault()">
-                <span class="badge me-2" [ngClass]="getPriorityBadgeClass(priority.value)">{{ priority.value }}</span>
-                {{ priority.label }}
-              </a>
-            </li>
-          </ul>
-        </div>
-        
-        <!-- Bulk Delete -->
-        <button class="btn btn-sm btn-outline-danger" (click)="bulkDelete()">
-          <i class="bi bi-trash me-1"></i>Delete Selected
-        </button>
-      </div>
-    </div>
-  </div>
-  <!-- Skeleton loading -->
-     <app-skeleton 
+     <!-- Skeleton loading -->
+   <app-skeleton 
      *ngIf="loading" 
      [rows]="5"
      [columns]="[
-       { width: '5%' },
-       { width: '15%' },
-       { width: '10%' },
-       { width: '10%' },
-       { width: '10%' },
-       { width: '15%' },
-       { width: '15%' },
-       { width: '10%' },
-       { width: '10%' }
-     ]">
+       { width: '3%' },
+       { width: '25%' },
+       { width: '12%' },
+       { width: '12%' },
+       { width: '18%' },
+       { width: '12%' },
+       { width: '18%' }
+     ]"
+     class="table-skeleton">
    </app-skeleton>
 
-     <!-- Actual table -->
-   <table *ngIf="!loading" class="table table-bordered table-striped custom-table">
-     <thead>
-     <tr class="table-header">
-       <!-- Select All Checkbox -->
-       <th style="width: 5%;">
-         <div class="form-check">
-           <input class="form-check-input" type="checkbox" 
-                  [checked]="selectAll" 
-                  (change)="toggleSelectAll()"
-                  [indeterminate]="selectedTasks.size > 0 && selectedTasks.size < pagedTasks.length">
-         </div>
-       </th>
-              <th style="width:15%; cursor:pointer" (click)="toggleSort('title')" title="Sort by Title">
-         <div class="header-content">
-                       <i class="bi bi-house me-2"></i>
-           <span class="header-text">TITLE</span>
-                       <div class="sort-icons">
-              <ng-container *ngIf="sortBy === 'title'; else titleNeutral">
-                <i *ngIf="sortDir === 'asc'" class="bi bi-sort-up"></i>
-                <i *ngIf="sortDir === 'desc'" class="bi bi-sort-down"></i>
-              </ng-container>
-              <ng-template #titleNeutral>
-                <i class="bi bi-sort"></i>
-              </ng-template>
+  <!-- Table Container with Scroll -->
+  <div class="table-container">
+    <table *ngIf="!loading" class="table table-bordered table-striped custom-table">
+      <thead>
+        <tr class="table-header">
+          <!-- Select All Checkbox -->
+          <th>
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" 
+                     [checked]="selectedTasks.size === pagedTasks.length && pagedTasks.length > 0" 
+                     (change)="toggleSelectAll($event)"
+                     [indeterminate]="selectedTasks.size > 0 && selectedTasks.size < pagedTasks.length">
             </div>
-         </div>
-       </th>
-              <th style="width:10%; cursor:pointer" (click)="toggleSort('status')" title="Sort by Status" class="status-column">
-         <div class="header-content">
-                       <i class="bi bi-building me-2"></i>
-           <span class="header-text">STATUS</span>
-                       <div class="sort-icons">
-              <ng-container *ngIf="sortBy === 'status'; else statusNeutral">
-                <i *ngIf="sortDir === 'asc'" class="bi bi-sort-up"></i>
-                <i *ngIf="sortDir === 'desc'" class="bi bi-sort-down"></i>
-              </ng-container>
-              <ng-template #statusNeutral>
-                <i class="bi bi-sort"></i>
-              </ng-template>
+          </th>
+          <th class="cursor-pointer" (click)="toggleSort('title')" title="Sort by Title">
+            <div class="header-content">
+              <i class="bi bi-house me-2"></i>
+              <span class="header-text">TITLE</span>
+              <div class="sort-icons">
+                <ng-container *ngIf="sortField === 'title'; else titleNeutral">
+                  <i *ngIf="sortDirection === 'asc'" class="bi bi-sort-up"></i>
+                  <i *ngIf="sortDirection === 'desc'" class="bi bi-sort-down"></i>
+                </ng-container>
+                <ng-template #titleNeutral>
+                  <i class="bi bi-sort"></i>
+                </ng-template>
+              </div>
             </div>
-         </div>
-       </th>
-              <th style="width:10%; cursor:pointer" (click)="toggleSort('priority')" title="Sort by Priority">
-         <div class="header-content">
-                       <i class="bi bi-eye me-2"></i>
-           <span class="header-text">PRIORITY</span>
-                       <div class="sort-icons">
-              <ng-container *ngIf="sortBy === 'priority'; else priorityNeutral">
-                <i *ngIf="sortDir === 'asc'" class="bi bi-sort-up"></i>
-                <i *ngIf="sortDir === 'desc'" class="bi bi-sort-down"></i>
-              </ng-container>
-              <ng-template #priorityNeutral>
-                <i class="bi bi-sort"></i>
-              </ng-template>
+          </th>
+          <th class="cursor-pointer" (click)="toggleSort('status')" title="Sort by Status" class="status-column">
+            <div class="header-content">
+              <i class="bi bi-building me-2"></i>
+              <span class="header-text">STATUS</span>
+              <div class="sort-icons">
+                <ng-container *ngIf="sortField === 'status'; else statusNeutral">
+                  <i *ngIf="sortDirection === 'asc'" class="bi bi-sort-up"></i>
+                  <i *ngIf="sortDirection === 'desc'" class="bi bi-sort-down"></i>
+                </ng-container>
+                <ng-template #statusNeutral>
+                  <i class="bi bi-sort"></i>
+                </ng-template>
+              </div>
             </div>
-         </div>
-       </th>
-       <th style="width:10%;">
-         <div class="header-content">
-           <i class="bi bi-tags me-2"></i>
-           <span class="header-text">TAGS</span>
-         </div>
-       </th>
-              <th style="width:15%; cursor:pointer" (click)="toggleSort('due_date')" title="Sort by Due Date">
-         <div class="header-content">
-                       <i class="bi bi-calendar me-2"></i>
-           <span class="header-text">DUE DATE</span>
-                       <div class="sort-icons">
-              <ng-container *ngIf="sortBy === 'due_date'; else dueNeutral">
-                <i *ngIf="sortDir === 'asc'" class="bi bi-sort-up"></i>
-                <i *ngIf="sortDir === 'desc'" class="bi bi-sort-down"></i>
-              </ng-container>
-              <ng-template #dueNeutral>
-                <i class="bi bi-sort"></i>
-              </ng-template>
+          </th>
+          <th class="cursor-pointer" (click)="toggleSort('priority')" title="Sort by Priority">
+            <div class="header-content">
+              <i class="bi bi-eye me-2"></i>
+              <span class="header-text">PRIORITY</span>
+              <div class="sort-icons">
+                <ng-container *ngIf="sortField === 'priority'; else priorityNeutral">
+                  <i *ngIf="sortDirection === 'asc'" class="bi bi-sort-up"></i>
+                  <i *ngIf="sortDirection === 'desc'" class="bi bi-sort-down"></i>
+                </ng-container>
+                <ng-template #priorityNeutral>
+                  <i class="bi bi-sort"></i>
+                </ng-template>
+              </div>
             </div>
-         </div>
-       </th>
-              <th style="width:15%; cursor:pointer" (click)="toggleSort('updated_at')" title="Sort by Updated At">
-         <div class="header-content">
-                       <i class="bi bi-envelope me-2"></i>
-           <span class="header-text">UPDATED AT</span>
-                       <div class="sort-icons">
-              <ng-container *ngIf="sortBy === 'updated_at'; else updatedNeutral">
-                <i *ngIf="sortDir === 'asc'" class="bi bi-sort-up"></i>
-                <i *ngIf="sortDir === 'desc'" class="bi bi-sort-down"></i>
-              </ng-container>
-              <ng-template #updatedNeutral>
-                <i class="bi bi-sort"></i>
-              </ng-template>
+          </th>
+          <th>
+            <div class="header-content">
+              <i class="bi bi-tags me-2"></i>
+              <span class="header-text">TAGS</span>
             </div>
-         </div>
-       </th>
-               <th style="width:10%">
-          <div class="header-content">
-                        <i class="bi bi-geo-alt me-2"></i>
-            <span class="header-text">ASSIGNEE</span>
-          </div>
-        </th>
-        <th style="width:10%">
-          <div class="header-content">
-            <i class="bi bi-gear me-2"></i>
-            <span class="header-text">ACTIONS</span>
-          </div>
-        </th>
-     </tr>
-     <tr class="filter-row">
-       <!-- Empty filter for checkbox column -->
-       <th>
-         <!-- No filter for checkbox column -->
-       </th>
-       <!-- Title filter -->
-       <th>
-         <div class="filter-container">
-           <input class="form-control form-control-sm filter-input" placeholder="Search title" [(ngModel)]="filters.title" (ngModelChange)="onFiltersChanged()" />
-           <i class="bi bi-funnel filter-icon"></i>
-         </div>
-       </th>
-       <!-- Status filter -->
-       <th>
-         <div class="filter-container">
-           <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.status" (ngModelChange)="onFiltersChanged()">
-             <option [ngValue]="undefined">All</option>
-             <option *ngFor="let s of statusOptions" [ngValue]="s.value">{{ s.label }}</option>
-           </select>
-           <i class="bi bi-chevron-down filter-icon"></i>
-         </div>
-       </th>
-       <!-- Priority filter -->
-       <th>
-         <div class="filter-container">
-           <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.priority" (ngModelChange)="onFiltersChanged()">
-             <option [ngValue]="undefined">All</option>
-             <option *ngFor="let p of priorityOptions" [ngValue]="p.value">{{ p.label }}</option>
-           </select>
-           <i class="bi bi-chevron-down filter-icon"></i>
-         </div>
-       </th>
-       <!-- Tags filter -->
-       <th>
-         <div class="filter-container">
-           <input class="form-control form-control-sm filter-input" placeholder="Search tags" [(ngModel)]="filters.tags" (ngModelChange)="onFiltersChanged()" />
-           <i class="bi bi-funnel filter-icon"></i>
-         </div>
-       </th>
-       <!-- Due Date filter -->
-       <th>
-         <div class="filter-container">
-           <input class="form-control form-control-sm filter-input" type="date" [(ngModel)]="filters.due_date" (ngModelChange)="onFiltersChanged()" />
-           <i class="bi bi-calendar filter-icon"></i>
-         </div>
-       </th>
-       <!-- Updated At filter -->
-       <th>
-         <div class="filter-container">
-           <input class="form-control form-control-sm filter-input" placeholder="Search updated" [(ngModel)]="filters.updated_at" (ngModelChange)="onFiltersChanged()" />
-           <i class="bi bi-funnel filter-icon"></i>
-         </div>
-       </th>
-       <!-- Assignee filter -->
-       <th>
-          <div class="filter-container">
-            <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.assignee" (ngModelChange)="onFiltersChanged()">
-              <option [ngValue]="undefined">All</option>
-              <option *ngFor="let u of users" [ngValue]="u.id">{{ u.firstName }} {{ u.lastName }}</option>
-            </select>
-            <i class="bi bi-chevron-down filter-icon"></i>
-          </div>
-        </th>
-        <!-- Actions column - no filter -->
-        <th>
-          <!-- No filter for actions column -->
-        </th>
-     </tr>
-     </thead>
-    <tbody>
-      <ng-container *ngFor="let task of pagedTasks; let i = index">
-         <tr (click)="onRowClick(task, $event)"
-         (keydown)="onRowKeydown($event, task)"
-         [class.selected-row]="selectedTask?.id === task.id"
-         tabindex="0"
-         class="table-row-clickable">
-       <!-- Task Selection Checkbox -->
-       <td>
-         <div class="form-check">
-           <input class="form-check-input" type="checkbox" 
-                  [checked]="selectedTasks.has(task.id)"
-                  (change)="toggleTaskSelection(task.id)"
-                  (click)="$event.stopPropagation()">
-         </div>
-       </td>
-      <td>
-        <div class="d-flex align-items-center">
-          <button class="btn btn-sm btn-link p-0 me-2" 
-                  (click)="toggleRowExpansion(i); $event.stopPropagation()"
-                  [title]="expandedRows.has(i) ? 'Collapse' : 'Expand'">
-            <i class="bi" [ngClass]="expandedRows.has(i) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
-          </button>
-          {{ task.title }}
-        </div>
-      </td>
-      <td class="status-column">
-        <div class="d-flex align-items-center justify-content-between">
-          <span>{{ task.status | statusLabel }}</span>
-          <div class="quick-actions ms-2">
-            <div class="dropdown">
-              <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
-                      type="button" 
-                      data-bs-toggle="dropdown"
-                      (click)="$event.stopPropagation()"
-                      title="Quick Status Change">
-                <i class="bi bi-arrow-repeat"></i>
-              </button>
-              <ul class="dropdown-menu">
-                <li *ngFor="let status of getAvailableStatuses(task.status)">
-                  <a class="dropdown-item" 
-                     href="#" 
-                     (click)="quickChangeStatus(task, status.value); $event.preventDefault()">
-                    <i class="bi" [ngClass]="status.icon"></i> {{ status.label }}
-                  </a>
-                </li>
-              </ul>
+          </th>
+          <th class="cursor-pointer" (click)="toggleSort('due_date')" title="Sort by Due Date">
+            <div class="header-content">
+              <i class="bi bi-calendar me-2"></i>
+              <span class="header-text">DUE DATE</span>
+              <div class="sort-icons">
+                <ng-container *ngIf="sortField === 'due_date'; else dueNeutral">
+                  <i *ngIf="sortDirection === 'asc'" class="bi bi-sort-up"></i>
+                  <i *ngIf="sortDirection === 'desc'" class="bi bi-sort-down"></i>
+                </ng-container>
+                <ng-template #dueNeutral>
+                  <i class="bi bi-sort"></i>
+                </ng-template>
+              </div>
             </div>
-          </div>
-        </div>
-      </td>
-      <td>
-        <span [ngClass]="getPriorityBadgeClass(task.priority)">{{ task.priority }}</span>
-      </td>
-      <td>
-        <div class="tags-container">
-          <span *ngFor="let tag of task.tags" class="badge bg-info me-1">{{ tag }}</span>
-          <span *ngIf="!task.tags || task.tags.length === 0" class="text-muted">No tags</span>
-        </div>
-      </td>
-      <td>
-        <div class="d-flex flex-column">
-          <span *ngIf="task.due_date">{{ task.due_date | date:'yyyy-MM-dd' }}</span>
-          <span *ngIf="!task.due_date" class="text-muted">No due date</span>
-                     <span *ngIf="task.due_date && isTaskOverdue(task.due_date, task.status)" 
-                 class="badge bg-danger text-white mt-1" style="font-size: 0.7em;">
-             Overdue
-           </span>
-        </div>
-      </td>
-      <td>{{ task.updated_at | date:'yyyy-MM-dd HH:mm' }}</td>
-             <td>
-         <div class="d-flex align-items-center">
-           <ng-container *ngIf="getAssignee(task) as a; else unassignedTpl">
-             <span>j_{{ a.username.toLowerCase() }}</span>
-           </ng-container>
-           <ng-template #unassignedTpl>
-             <span class="text-muted">Unassigned</span>
-           </ng-template>
-         </div>
-       </td>
-       <td>
-         <div class="d-flex gap-1 justify-content-center">
-           <button class="btn btn-sm btn-outline-primary" 
-                   (click)="viewTaskDetails(task)" 
-                   title="View Details">
-             <i class="bi bi-eye"></i>
-           </button>
-           <button class="btn btn-sm btn-outline-warning" 
-                   (click)="editTask(task)" 
-                   title="Edit Task">
-             <i class="bi bi-pencil"></i>
-           </button>
-           <button class="btn btn-sm btn-outline-danger" 
-                   (click)="deleteTask(task)" 
-                   title="Delete Task">
-             <i class="bi bi-trash"></i>
-           </button>
-         </div>
-       </td>
-     </tr>
-     
-     <!-- Expanded row for description (accordion) - appears directly under the task -->
-     <tr *ngIf="expandedRows.has(i)" 
-         class="expanded-row">
-       <td colspan="9">
-         <div class="expanded-content p-3 bg-light">
-           <div class="row">
-             <div class="col-md-8">
-               <h6 class="text-primary mb-2">Description:</h6>
-               <p *ngIf="task.description" class="mb-0">{{ task.description }}</p>
-               <p *ngIf="!task.description" class="text-muted mb-0">No description available</p>
-             </div>
-             <div class="col-md-4">
-               <h6 class="text-primary mb-2">Additional Info:</h6>
-               <div class="mb-2">
-                 <strong>Created:</strong> {{ task.created_at | date:'yyyy-MM-dd HH:mm' }}
-               </div>
-               <div class="mb-2" *ngIf="task.points">
-                 <strong>Points:</strong> {{ task.points }}
-               </div>
-               <div class="mb-2" *ngIf="task.estimated_hours">
-                 <strong>Estimated Hours:</strong> {{ task.estimated_hours }}h
-               </div>
-               <div class="mb-2" *ngIf="task.actual_hours">
-                 <strong>Actual Hours:</strong> {{ task.actual_hours }}h
-               </div>
-             </div>
-           </div>
-         </div>
-       </td>
-     </tr>
-      </ng-container>
-     
-    </tbody>
-     </table>
-      <ng-container *ngIf="!loading && pagedTasks.length === 0">
-     <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5" style="min-height: 180px;">
-       <i class="bi bi-inbox fs-1 mb-3"></i>
-       <div class="fs-5">No Records Found</div>
-     </div>
-   </ng-container>
-   
-       <!-- Paginator always at bottom -->
-    <app-paginator
-      [currentPage]="currentPage"
-      [totalItems]="totalItems"
-      [itemsPerPage]="itemsPerPage"
-      (pageChange)="onPageChange($event)"
-      (pageSizeChange)="onPageSizeChange($event)"
-         ></app-paginator>
-
-  <!-- Task Form Modal -->
-  <task-form 
-    (taskAdded)="onTaskAdded($event)"
-    (taskUpdated)="onTaskUpdated($event)">
-  </task-form>
-
-  <!-- Keyboard Shortcuts Hint -->
-  <div class="keyboard-hints" [class.show]="showKeyboardHints">
-    <div class="mb-1"><strong>Keyboard Shortcuts:</strong></div>
-    <div><span class="key">/</span> Search</div>
-    <div><span class="key">n</span> New Task</div>
-    <div><span class="key">Del</span> Delete Selected</div>
+          </th>
+          
+          
+          <th>
+            <div class="header-content">
+              <i class="bi bi-gear me-2"></i>
+              <span class="header-text">ACTIONS</span>
+            </div>
+          </th>
+        </tr>
+        <tr class="filter-row">
+          <!-- Empty filter for checkbox column -->
+          <th>
+            <!-- No filter for checkbox column -->
+          </th>
+          <!-- Title filter -->
+          <th>
+            <div class="filter-container">
+              <input class="form-control form-control-sm filter-input" placeholder="Search title" [(ngModel)]="filters.search" (ngModelChange)="onFiltersChanged()" />
+              <i class="bi bi-funnel filter-icon"></i>
+            </div>
+          </th>
+          <!-- Status filter -->
+          <th>
+            <div class="filter-container">
+              <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.status" (ngModelChange)="onFiltersChanged()">
+                <option [ngValue]="undefined">All</option>
+                <option *ngFor="let s of statusOptions" [ngValue]="s.value">{{ s.label }}</option>
+              </select>
+              <i class="bi bi-chevron-down filter-icon"></i>
+            </div>
+          </th>
+          <!-- Priority filter -->
+          <th>
+            <div class="filter-container">
+              <select class="form-select form-select-sm filter-input" [(ngModel)]="filters.priority" (ngModelChange)="onFiltersChanged()">
+                <option [ngValue]="undefined">All</option>
+                <option *ngFor="let p of priorityOptions" [ngValue]="p.value">{{ p.label }}</option>
+              </select>
+              <i class="bi bi-chevron-down filter-icon"></i>
+            </div>
+          </th>
+          <!-- Tags filter -->
+          <th>
+            <div class="filter-container">
+              <input class="form-control form-control-sm filter-input" placeholder="Search tags" [(ngModel)]="filters.tags" (ngModelChange)="onFiltersChanged()" />
+              <i class="bi bi-funnel filter-icon"></i>
+            </div>
+          </th>
+          <!-- Due Date filter -->
+          <th>
+            <div class="filter-container">
+              <input class="form-control form-control-sm filter-input" type="date" [(ngModel)]="filters.due_date" (ngModelChange)="onFiltersChanged()" />
+              <i class="bi bi-calendar filter-icon"></i>
+            </div>
+          </th>
+          
+          
+          <!-- Actions column - no filter -->
+          <th>
+            <!-- No filter for actions column -->
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <ng-container *ngFor="let task of pagedTasks; let i = index">
+          <tr (click)="onRowClick(task, $event)"
+              (keydown)="onRowKeydown($event, task)"
+              [class.selected-row]="selectedTask?.id === task.id"
+              tabindex="0"
+              class="table-row-clickable">
+            <!-- Task Selection Checkbox -->
+            <td>
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" 
+                       [checked]="selectedTasks.has(task.id)"
+                       (change)="toggleTaskSelection(task.id)"
+                       (click)="$event.stopPropagation()">
+              </div>
+            </td>
+            <td class="status-column">
+              <div class="d-flex align-items-center">
+                <button class="btn btn-sm btn-link p-0 me-2" 
+                        (click)="toggleRowExpansion(task.id); $event.stopPropagation()"
+                        [title]="expandedRows.has(task.id) ? 'Collapse' : 'Expand'">
+                  <i class="bi" [ngClass]="expandedRows.has(task.id) ? 'bi-chevron-down' : 'bi-chevron-right'"></i>
+                </button>
+                {{ task.title }}
+              </div>
+            </td>
+            <td class="status-column">
+              <div class="d-flex align-items-center justify-content-between">
+                <span>{{ task.status | statusLabel }}</span>
+                <div class="quick-actions ms-2">
+                  <div class="dropdown">
+                    <button class="btn btn-sm btn-outline-secondary dropdown-toggle" 
+                            type="button" 
+                            data-bs-toggle="dropdown"
+                            (click)="$event.stopPropagation()"
+                            title="Quick Status Change">
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                    <ul class="dropdown-menu">
+                      <li *ngFor="let status of getAvailableStatuses(task.status)">
+                        <a class="dropdown-item" 
+                           href="#" 
+                           (click)="quickChangeStatus(task, status.value); $event.preventDefault()">
+                          <i class="bi" [ngClass]="status.icon"></i> {{ status.label }}
+                        </a>
+                      </li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </td>
+            <td class="status-column">
+              <span [ngClass]="getPriorityBadgeClass(task.priority)">{{ task.priority }}</span>
+            </td>
+            <td>
+              <div class="tags-container">
+                <span *ngFor="let tag of task.tags" class="badge bg-info me-1">{{ tag }}</span>
+                <span *ngIf="!task.tags || task.tags.length === 0" class="text-muted">No tags</span>
+              </div>
+            </td>
+            <td class="status-column">
+              <div class="d-flex flex-column">
+                <span *ngIf="task.due_date">{{ task.due_date | date:'yyyy-MM-dd' }}</span>
+                <span *ngIf="!task.due_date" class="text-muted">No due date</span>
+                <span *ngIf="task.due_date && isTaskOverdue(task.due_date, task.status)" 
+                      class="badge bg-danger text-white mt-1" style="font-size: 0.7em;">
+                  Overdue
+                </span>
+              </div>
+            </td>
+            
+            
+            <td class="status-column">
+              <div class="d-flex gap-1 justify-content-center">
+                <button class="btn btn-sm btn-outline-primary" 
+                        (click)="viewTaskDetails(task)" 
+                        title="View Details">
+                  <i class="bi bi-eye"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-warning" 
+                        (click)="editTask(task)" 
+                        title="Edit Task">
+                  <i class="bi bi-pencil"></i>
+                </button>
+                <button class="btn btn-sm btn-outline-danger" 
+                        (click)="deleteTask(task)" 
+                        title="Delete Task">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </td>
+          </tr>
+          
+                     <!-- Expanded row for description (accordion) - appears directly under the task -->
+           <tr class="table-header" *ngIf="expandedRows.has(task.id)" 
+               class="expanded-row">
+             <td colspan="7">
+              <div class="expanded-content p-3 bg-light">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h6 class="text-primary mb-2">Description:</h6>
+                    <p *ngIf="task.description" class="mb-0">{{ task.description }}</p>
+                    <p *ngIf="!task.description" class="text-muted mb-0">No description available</p>
+                  </div>
+                  <div class="col-md-4">
+                    <h6 class="text-primary mb-2">Additional Info:</h6>
+                    <div class="mb-2">
+                      <strong>Created:</strong> {{ task.created_at | date:'yyyy-MM-dd HH:mm' }}
+                    </div>
+                    <div class="mb-2" *ngIf="task.points">
+                      <strong>Points:</strong> {{ task.points }}
+                    </div>
+                    <div class="mb-2" *ngIf="task.estimated_hours">
+                      <strong>Estimated Hours:</strong> {{ task.estimated_hours }}h
+                    </div>
+                    <div class="mb-2" *ngIf="task.actual_hours">
+                      <strong>Actual Hours:</strong> {{ task.actual_hours }}h
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
+        
+      </tbody>
+    </table>
+    <ng-container *ngIf="!loading && pagedTasks.length === 0">
+      <div class="d-flex flex-column align-items-center justify-content-center text-muted py-5" style="min-height: 180px;">
+        <i class="bi bi-inbox fs-1 mb-3"></i>
+        <div class="fs-5">No Records Found</div>
+      </div>
+    </ng-container>
   </div>
 
+  <!-- Paginator always at bottom -->
+  <app-paginator
+    [currentPage]="currentPage"
+    [totalItems]="totalItems"
+    [itemsPerPage]="itemsPerPage"
+    [loading]="loading"
+    (pageChange)="onPageChange($event)"
+    (pageSizeChange)="onPageSizeChange($event)">
+  </app-paginator>
 </div>

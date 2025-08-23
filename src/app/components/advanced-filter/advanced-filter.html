@@ -1,28 +1,18 @@
 <!-- Advanced Filter Panel -->
 <div class="advanced-filter-panel">
-  <!-- Filter Panel Header -->
-  <div class="filter-header" (click)="togglePanel()">
-    <div class="d-flex align-items-center justify-content-between">
-      <div class="d-flex align-items-center">
-        <i class="bi bi-funnel me-2"></i>
-        <span class="filter-title">Advanced Filters</span>
-        <span *ngIf="activeFiltersCount > 0" class="badge bg-primary ms-2">
-          {{ activeFiltersCount }}
-        </span>
-      </div>
-      <div class="d-flex align-items-center gap-2">
-        <button *ngIf="activeFiltersCount > 0" 
-                class="btn btn-sm btn-outline-secondary"
-                (click)="onClearFilters(); $event.stopPropagation()">
-          <i class="bi bi-x-circle me-1"></i>Clear All
-        </button>
-        <i class="bi" [ngClass]="isCollapsed ? 'bi-chevron-down' : 'bi-chevron-up'"></i>
-      </div>
-    </div>
-  </div>
-
   <!-- Filter Panel Content -->
-  <div class="filter-content" [class.collapsed]="isCollapsed">
+  <div class="filter-content">
+    <!-- Clear All Button -->
+    <div class="d-flex justify-content-between align-items-center mb-3" *ngIf="activeFiltersCount > 0">
+      <div class="d-flex align-items-center">
+        <span class="badge bg-primary me-2">{{ activeFiltersCount }} active filters</span>
+      </div>
+      <button class="btn btn-sm btn-outline-secondary"
+              (click)="onClearFilters()">
+        <i class="bi bi-x-circle me-1"></i>Clear All Filters
+      </button>
+    </div>
+    
     <div class="row g-3">
       
       <!-- Search Filter -->

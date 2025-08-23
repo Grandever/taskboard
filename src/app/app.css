@@ -1,36 +1,286 @@
+/* App specific variables - extending global variables */
 :root {
-  --primary: #0052cc;
+  --navbar-bg: var(--primary-500);
+  --navbar-text: white;
+  --navbar-search-bg: rgba(255, 255, 255, 0.15);
+  --navbar-search-border: rgba(255, 255, 255, 0.2);
+  --navbar-search-text: white;
+  --navbar-placeholder: rgba(255, 255, 255, 0.7);
+  --navbar-search-focus-bg: rgba(255, 255, 255, 0.25);
+  --navbar-search-focus-border: rgba(255, 255, 255, 0.4);
+  --navbar-search-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Navbar base styles */
 .navbar.bg-body-tertiary {
-  background-color: var(--primary) !important;
+  background-color: var(--navbar-bg) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  transition: all var(--transition-normal);
 }
 
 .navbar .navbar-brand,
 .navbar .nav-link,
 .navbar .btn,
-.navbar .form-control,
 .navbar .navbar-toggler-icon {
-  color: #ffffff !important;
+  color: var(--navbar-text) !important;
+  transition: all var(--transition-normal);
 }
 
-/* Ensure the navbar search is readable */
-.navbar .form-control {
-  background-color: #0e2f66 !important; /* dark navy like screenshot */
-  color: #ffffff !important;
-  border: 1px solid rgba(255,255,255,0.15) !important;
+/* Enhanced navbar search input styling */
+.navbar .form-control,
+.navbar .navbar-search-input {
+  background-color: var(--navbar-search-bg) !important;
+  color: var(--navbar-search-text) !important;
+  border: 1px solid var(--navbar-search-border) !important;
+  border-radius: 8px !important;
+  padding: 8px 12px !important;
+  font-size: 0.875rem !important;
+  transition: all var(--transition-normal) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: var(--navbar-search-shadow) !important;
+  min-width: 200px !important;
 }
 
-.navbar .form-control::placeholder {
-  color: #b8c7e0 !important; /* light muted */
+.navbar .form-control:focus,
+.navbar .navbar-search-input:focus {
+  background-color: var(--navbar-search-focus-bg) !important;
+  border-color: var(--navbar-search-focus-border) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), var(--navbar-search-shadow) !important;
+  outline: none !important;
+  transform: translateY(-1px) !important;
 }
 
-.navbar .btn.btn-outline-success {
-  border-color: #ffffff;
-  color: #ffffff;
+.navbar .form-control::placeholder,
+.navbar .navbar-search-input::placeholder {
+  color: var(--navbar-placeholder) !important;
+  font-style: italic !important;
+  transition: color var(--transition-normal) !important;
 }
 
-.navbar .btn.btn-outline-success:hover {
-  background-color: #0747a6;
+.navbar .form-control:focus::placeholder,
+.navbar .navbar-search-input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.5) !important;
+}
+
+/* Navbar button styles */
+.navbar .btn.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  color: var(--navbar-text) !important;
+  border-radius: 8px !important;
+  padding: 8px 16px !important;
+  font-weight: 500 !important;
+  transition: all var(--transition-normal) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.navbar .btn.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2) !important;
+}
+
+.navbar .btn.btn-outline-light:active {
+  transform: translateY(0) !important;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15) !important;
+}
+
+/* Navbar brand and links hover effects */
+.navbar .navbar-brand:hover,
+.navbar .nav-link:hover {
+  color: rgba(255, 255, 255, 0.9) !important;
+  transform: translateY(-1px) !important;
+}
+
+.navbar .nav-link.active {
+  color: rgba(255, 255, 255, 0.9) !important;
+  font-weight: 600 !important;
+  position: relative !important;
+}
+
+.navbar .nav-link.active::after {
+  content: '' !important;
+  position: absolute !important;
+  bottom: -2px !important;
+  left: 50% !important;
+  transform: translateX(-50%) !important;
+  width: 20px !important;
+  height: 2px !important;
+  background: rgba(255, 255, 255, 0.8) !important;
+  border-radius: 1px !important;
+}
+
+/* Navbar toggler enhancement */
+.navbar .navbar-toggler {
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-radius: 6px !important;
+  padding: 4px 8px !important;
+  transition: all var(--transition-normal) !important;
+}
+
+.navbar .navbar-toggler:hover {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* ===== DARK MODE STYLES ===== */
+
+/* Dark mode navbar variables */
+.dark-mode {
+  --navbar-bg: var(--primary-600);
+  --navbar-search-bg: rgba(0, 0, 0, 0.2);
+  --navbar-search-border: rgba(255, 255, 255, 0.1);
+  --navbar-search-focus-bg: rgba(0, 0, 0, 0.3);
+  --navbar-search-focus-border: rgba(255, 255, 255, 0.2);
+  --navbar-search-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Dark mode navbar base */
+.dark-mode .navbar.bg-body-tertiary {
+  background-color: var(--navbar-bg) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Dark mode search input */
+.dark-mode .navbar .form-control,
+.dark-mode .navbar .navbar-search-input {
+  background-color: var(--navbar-search-bg) !important;
+  border-color: var(--navbar-search-border) !important;
+  box-shadow: var(--navbar-search-shadow) !important;
+}
+
+.dark-mode .navbar .form-control:focus,
+.dark-mode .navbar .navbar-search-input:focus {
+  background-color: var(--navbar-search-focus-bg) !important;
+  border-color: var(--navbar-search-focus-border) !important;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05), var(--navbar-search-shadow) !important;
+}
+
+.dark-mode .navbar .form-control::placeholder,
+.dark-mode .navbar .navbar-search-input::placeholder {
+  color: rgba(255, 255, 255, 0.6) !important;
+}
+
+.dark-mode .navbar .form-control:focus::placeholder,
+.dark-mode .navbar .navbar-search-input:focus::placeholder {
+  color: rgba(255, 255, 255, 0.4) !important;
+}
+
+/* Dark mode buttons */
+.dark-mode .navbar .btn.btn-outline-light {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark-mode .navbar .btn.btn-outline-light:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* Dark mode toggler */
+.dark-mode .navbar .navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.dark-mode .navbar .navbar-toggler:hover {
+  border-color: rgba(255, 255, 255, 0.3) !important;
+  background-color: rgba(255, 255, 255, 0.05) !important;
+}
+
+/* ===== RESPONSIVE STYLES ===== */
+
+@media (max-width: 768px) {
+  .navbar .form-control,
+  .navbar .navbar-search-input {
+    min-width: 150px !important;
+    font-size: 0.8rem !important;
+    padding: 6px 10px !important;
+  }
+  
+  .navbar .btn.btn-outline-light {
+    padding: 6px 12px !important;
+    font-size: 0.875rem !important;
+  }
+  
+  .navbar .navbar-brand {
+    font-size: 1.1rem !important;
+  }
+}
+
+@media (max-width: 576px) {
+  .navbar .form-control,
+  .navbar .navbar-search-input {
+    min-width: 120px !important;
+    font-size: 0.75rem !important;
+    padding: 5px 8px !important;
+  }
+  
+  .navbar .btn.btn-outline-light {
+    padding: 5px 10px !important;
+    font-size: 0.8rem !important;
+  }
+  
+  .navbar .navbar-brand {
+    font-size: 1rem !important;
+  }
+}
+
+/* ===== ANIMATIONS ===== */
+
+/* Search input focus animation */
+.navbar .form-control,
+.navbar .navbar-search-input {
+  animation: searchGlow 0.3s ease-out;
+}
+
+@keyframes searchGlow {
+  0% {
+    box-shadow: var(--navbar-search-shadow);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1), var(--navbar-search-shadow);
+  }
+  100% {
+    box-shadow: var(--navbar-search-shadow);
+  }
+}
+
+/* Button hover animation */
+.navbar .btn {
+  position: relative;
+  overflow: hidden;
+}
+
+.navbar .btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.1), transparent);
+  transition: left 0.5s ease;
+}
+
+.navbar .btn:hover::before {
+  left: 100%;
+}
+
+/* Dark mode animations */
+.dark-mode .navbar .form-control,
+.dark-mode .navbar .navbar-search-input {
+  animation: searchGlowDark 0.3s ease-out;
+}
+
+@keyframes searchGlowDark {
+  0% {
+    box-shadow: var(--navbar-search-shadow);
+  }
+  50% {
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.05), var(--navbar-search-shadow);
+  }
+  100% {
+    box-shadow: var(--navbar-search-shadow);
+  }
 }
 

@@ -20,7 +20,6 @@ export class AdvancedFilterComponent implements OnInit {
   @Output() clearFilters = new EventEmitter<void>();
 
   // Panel state
-  isCollapsed = true;
   activeFiltersCount = 0;
 
   // Filter options
@@ -84,9 +83,7 @@ export class AdvancedFilterComponent implements OnInit {
     return colors[index];
   }
 
-  togglePanel() {
-    this.isCollapsed = !this.isCollapsed;
-  }
+
 
   // Status filter methods
   toggleStatus(status: TaskStatus) {
