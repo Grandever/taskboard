@@ -10,6 +10,7 @@ import { SkeletonComponent } from '../skeleton/skeleton';
 import { BulkActionsComponent } from '../bulk-actions/bulk-actions';
 import { WipWarningComponent } from '../wip-warning/wip-warning';
 import { ControlsPanelComponent } from '../controls-panel/controls-panel';
+import { TaskDetail } from '../task-detail/task-detail';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { StatusLabelPipe } from '../../pipes/status-label.pipe';
 import { TaskStatus, TaskPriority, TASK_STATUS_OPTIONS, TASK_PRIORITY_OPTIONS } from '../../models/task.enums';
@@ -31,6 +32,7 @@ import { Subject, takeUntil, debounceTime, distinctUntilChanged } from 'rxjs';
     BulkActionsComponent,
     WipWarningComponent,
     ControlsPanelComponent,
+    TaskDetail,
     StatusLabelPipe
   ]
 })
@@ -48,6 +50,7 @@ export class TaskTableComponent implements OnInit, OnDestroy {
   selectedTasks: Set<string> = new Set();
   expandedRows: Set<string> = new Set();
   selectedTask: Task | null = null;
+  showTaskDetail: boolean = false;
   showAdvancedFilters: boolean = false;
   showDataGenerator: boolean = false;
 
@@ -103,6 +106,7 @@ export class TaskTableComponent implements OnInit, OnDestroy {
     this.setupRouteParams();
     this.setupThemeSubscription();
     this.setupSettingsSubscription();
+    this.setupTaskSubscription();
   }
 
   ngOnDestroy() {
@@ -173,20 +177,23 @@ export class TaskTableComponent implements OnInit, OnDestroy {
     const taskIds = Array.from(this.selectedTasks);
     Swal.fire({
       title: 'Are you sure?',
-      text: `This will delete ${taskIds.length} task(s) permanently.`,
+      text: `This will delete ${taskIds.length} task(s). You can undo within 5 seconds.`,
       icon: 'warning',
       showCancelButton: true,
       confirmButtonColor: '#d33',
       cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete them!'
+      confirmButtonText: 'Yes, delete them!',
+      cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
+        // Only delete and show undo toast if user confirms
         this.taskService.bulkDeleteTasks(taskIds).subscribe(() => {
           this.loadTasks();
           this.selectedTasks.clear();
           this.showBulkActions = false;
         });
       }
+      // If user cancels, do nothing - no undo toast needed
     });
   }
 
@@ -271,7 +278,23 @@ export class TaskTableComponent implements OnInit, OnDestroy {
   }
 
   viewTaskDetails(task: Task) {
-    this.router.navigate(['/task', task.id]);
+    this.selectedTask = task;
+    this.showTaskDetail = true;
+  }
+
+  closeTaskDetail() {
+    this.showTaskDetail = false;
+    this.selectedTask = null;
+  }
+
+  onTaskUpdated(task: Task) {
+    // Update the task in the list
+    const index = this.tasks.findIndex(t => t.id === task.id);
+    if (index !== -1) {
+      this.tasks[index] = task;
+      this.applyFilterSortAndPaginate();
+    }
+    this.closeTaskDetail();
   }
 
   // ===== FILTERING & SORTING =====
@@ -438,15 +461,30 @@ export class TaskTableComponent implements OnInit, OnDestroy {
   getPriorityBadgeClass(priority: TaskPriority): string {
     switch (priority) {
       case TaskPriority.URGENT:
-        return 'bg-danger';
+        return 'priority-urgent';
       case TaskPriority.HIGH:
-        return 'bg-warning';
+        return 'priority-high';
       case TaskPriority.MEDIUM:
-        return 'bg-info';
+        return 'priority-medium';
       case TaskPriority.LOW:
-        return 'bg-success';
+        return 'priority-low';
       default:
-        return 'bg-secondary';
+        return 'priority-default';
+    }
+  }
+
+  getPriorityIcon(priority: TaskPriority): string {
+    switch (priority) {
+      case TaskPriority.URGENT:
+        return 'bi-exclamation-triangle-fill';
+      case TaskPriority.HIGH:
+        return 'bi-arrow-up-circle-fill';
+      case TaskPriority.MEDIUM:
+        return 'bi-dash-circle-fill';
+      case TaskPriority.LOW:
+        return 'bi-arrow-down-circle-fill';
+      default:
+        return 'bi-circle-fill';
     }
   }
 
@@ -483,10 +521,12 @@ export class TaskTableComponent implements OnInit, OnDestroy {
       cancelButtonText: 'Cancel'
     }).then((result) => {
       if (result.isConfirmed) {
+        // Only delete and show undo toast if user confirms
         this.taskService.deleteTask(task.id).subscribe(() => {
           this.loadTasks();
         });
       }
+      // If user cancels, do nothing - no undo toast needed
     });
   }
 
@@ -533,6 +573,15 @@ export class TaskTableComponent implements OnInit, OnDestroy {
 
   private setupSettingsSubscription() {
     // Settings are handled by CSS variables
+  }
+
+  private setupTaskSubscription() {
+    // Subscribe to task changes to automatically update the table
+    this.taskService.tasks$.pipe(takeUntil(this.destroy$)).subscribe(tasks => {
+      this.tasks = tasks;
+      this.updateWipCount();
+      this.applyFilterSortAndPaginate();
+    });
   }
 
   // ===== HOST LISTENERS =====

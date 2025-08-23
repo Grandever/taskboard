@@ -1,7 +1,7 @@
 import { TaskStatus, TaskPriority } from './task.enums';
+import { BaseEntity } from './common.interfaces';
 
-export interface Task {
-  id: string;
+export interface Task extends BaseEntity {
   title: string;
   description?: string;
   status: TaskStatus;
@@ -9,15 +9,73 @@ export interface Task {
   assignee?: string; // user id
   tags?: string[];
   due_date?: string;
-  created_at: string;
-  updated_at: string;
   points?: number;
-  // New fields for enhanced functionality
+  // Time tracking
   estimated_hours?: number;
   actual_hours?: number;
+  time_spent?: number; // in minutes
+  // Attachments and files
+  attachments?: TaskAttachment[];
+  // Recycle bin fields
+  deleted_at?: string;
+  original_id?: string;
+  // Additional metadata
+  sprint?: string;
+  epic?: string;
+  story_points?: number;
+  complexity?: 'low' | 'medium' | 'high';
+  // Comments and activity
+  comments?: TaskComment[];
+  activity_log?: TaskActivity[];
+  // Dependencies
+  dependencies?: string[]; // task IDs this task depends on
+  blockers?: string[]; // task IDs blocking this task
+  // Custom fields
+  custom_fields?: Record<string, any>;
+}
+
+export interface TaskAttachment {
+  id: string;
+  filename: string;
+  originalName: string;
+  size: number;
+  mimeType: string;
+  url: string;
+  uploaded_at: string;
+  uploaded_by?: string;
+}
+
+export interface TaskComment {
+  id: string;
+  content: string;
+  author: string;
+  created_at: string;
+  updated_at?: string;
+  edited?: boolean;
   attachments?: string[];
-  deleted_at?: string; // For recycle bin
-  original_id?: string; // For recycle bin restoration
+}
+
+export interface TaskActivity {
+  id: string;
+  type: 'status_change' | 'priority_change' | 'assignment' | 'comment' | 'attachment' | 'time_log';
+  description: string;
+  user: string;
+  timestamp: string;
+  data?: Record<string, any>;
+}
+
+export interface TaskTemplate {
+  id: string;
+  name: string;
+  description?: string;
+  defaultStatus: TaskStatus;
+  defaultPriority: TaskPriority;
+  defaultPoints?: number;
+  defaultEstimatedHours?: number;
+  defaultTags?: string[];
+  customFields?: Record<string, any>;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface AppSettings {
@@ -107,10 +165,59 @@ export interface AppSettings {
   };
 }
 
-export interface User {
-  id: string;
+export interface User extends BaseEntity {
   firstName: string;
   lastName: string;
   username: string;
+  email: string;
   avatarUrl: string;
+  role: UserRole;
+  status: UserStatus;
+  preferences?: UserPreferences;
+  lastLogin?: string;
+  timezone?: string;
+  language?: string;
+}
+
+export enum UserRole {
+  ADMIN = 'admin',
+  MANAGER = 'manager',
+  DEVELOPER = 'developer',
+  TESTER = 'tester',
+  VIEWER = 'viewer'
+}
+
+export enum UserStatus {
+  ACTIVE = 'active',
+  INACTIVE = 'inactive',
+  SUSPENDED = 'suspended',
+  PENDING = 'pending'
+}
+
+export interface UserPreferences {
+  theme: 'light' | 'dark' | 'auto';
+  language: string;
+  timezone: string;
+  notifications: NotificationPreferences;
+  display: DisplayPreferences;
+}
+
+export interface NotificationPreferences {
+  email: boolean;
+  push: boolean;
+  desktop: boolean;
+  taskAssignments: boolean;
+  dueDateReminders: boolean;
+  statusChanges: boolean;
+  mentions: boolean;
+}
+
+export interface DisplayPreferences {
+  compactMode: boolean;
+  showCompletedTasks: boolean;
+  showOverdueTasks: boolean;
+  defaultView: 'board' | 'table' | 'calendar';
+  pageSize: number;
+  sortBy: string;
+  sortDirection: 'asc' | 'desc';
 }

@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { NgClass, NgIf, DatePipe } from '@angular/common';
+import { NgClass, NgIf, NgForOf, DatePipe } from '@angular/common';
 import { Task, User } from '../../../models/task.interfaces';
 import { TaskStatus, TaskPriority } from '../../../models/task.enums';
 import { StatusLabelPipe } from '../../../pipes/status-label.pipe';
@@ -7,7 +7,7 @@ import { StatusLabelPipe } from '../../../pipes/status-label.pipe';
 @Component({
   selector: 'task-card',
   standalone: true,
-  imports: [NgClass, NgIf, DatePipe, StatusLabelPipe],
+  imports: [NgClass, NgIf, NgForOf, DatePipe, StatusLabelPipe],
   template: `
     <div class="task-card" 
          [ngClass]="getCardClasses()"
@@ -68,6 +68,12 @@ import { StatusLabelPipe } from '../../../pipes/status-label.pipe';
          <div class="points" *ngIf="task.points && task.points > 0">
            <i class="bi bi-star-fill"></i>
            <span>{{ task.points }} pts</span>
+         </div>
+
+         <!-- Updated Date -->
+         <div class="updated-date">
+           <i class="bi bi-clock"></i>
+           <span class="text-muted small">{{ task.updated_at | date:'MMM dd' }}</span>
          </div>
       </div>
 

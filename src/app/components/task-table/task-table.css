@@ -1050,3 +1050,173 @@ body.dark-mode .table-bordered th,
 body.dark-mode .table-bordered td {
   border-color: var(--table-border) !important;
 }
+
+/* ===== TASK DETAIL OVERLAY STYLES ===== */
+.task-detail-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 1050;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--spacing-4);
+  backdrop-filter: blur(4px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.task-detail-container {
+  background: var(--card-bg);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-xl);
+  max-width: 90vw;
+  max-height: 90vh;
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+  animation: slideIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Dark mode overlay */
+.dark-mode .task-detail-overlay {
+  background-color: rgba(0, 0, 0, 0.7);
+}
+
+.dark-mode .task-detail-container {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .task-detail-overlay {
+    padding: var(--spacing-2);
+  }
+  
+  .task-detail-container {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+}
+
+/* ===== PRIORITY BADGE STYLES ===== */
+.priority-badge-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.priority-badge-container .badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-1);
+  padding: var(--spacing-1) var(--spacing-2);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  border-radius: var(--border-radius-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid transparent;
+  transition: all var(--transition-normal);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.priority-badge-container .badge i {
+  font-size: 0.8em;
+}
+
+/* Priority Colors */
+.priority-urgent {
+  background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%) !important;
+  color: white !important;
+  border-color: #dc3545 !important;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.3) !important;
+}
+
+.priority-high {
+  background: linear-gradient(135deg, #fd7e14 0%, #e8590c 100%) !important;
+  color: white !important;
+  border-color: #fd7e14 !important;
+  box-shadow: 0 2px 4px rgba(253, 126, 20, 0.3) !important;
+}
+
+.priority-medium {
+  background: linear-gradient(135deg, #0dcaf0 0%, #0aa8d1 100%) !important;
+  color: white !important;
+  border-color: #0dcaf0 !important;
+  box-shadow: 0 2px 4px rgba(13, 202, 240, 0.3) !important;
+}
+
+.priority-low {
+  background: linear-gradient(135deg, #198754 0%, #146c43 100%) !important;
+  color: white !important;
+  border-color: #198754 !important;
+  box-shadow: 0 2px 4px rgba(25, 135, 84, 0.3) !important;
+}
+
+.priority-default {
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%) !important;
+  color: white !important;
+  border-color: #6c757d !important;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.3) !important;
+}
+
+/* Hover effects */
+.priority-badge-container .badge:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* Dark mode priority badges */
+.dark-mode .priority-badge-container .badge {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+.dark-mode .priority-urgent {
+  background: linear-gradient(135deg, #dc3545 0%, #a71e2a 100%) !important;
+  box-shadow: 0 2px 4px rgba(220, 53, 69, 0.4) !important;
+}
+
+.dark-mode .priority-high {
+  background: linear-gradient(135deg, #fd7e14 0%, #d6500a 100%) !important;
+  box-shadow: 0 2px 4px rgba(253, 126, 20, 0.4) !important;
+}
+
+.dark-mode .priority-medium {
+  background: linear-gradient(135deg, #0dcaf0 0%, #0891b3 100%) !important;
+  box-shadow: 0 2px 4px rgba(13, 202, 240, 0.4) !important;
+}
+
+.dark-mode .priority-low {
+  background: linear-gradient(135deg, #198754 0%, #125a38 100%) !important;
+  box-shadow: 0 2px 4px rgba(25, 135, 84, 0.4) !important;
+}
+
+.dark-mode .priority-default {
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%) !important;
+  box-shadow: 0 2px 4px rgba(108, 117, 125, 0.4) !important;
+}

@@ -238,6 +238,9 @@ export class TaskForm implements OnInit, OnChanges, OnDestroy {
   }
 
   private updateExistingTask(task: Task): void {
+    // Ensure updated_at is set to current time
+    task.updated_at = new Date().toISOString();
+    
     this.taskService.updateTask(task).subscribe(() => {
       this.taskUpdated.emit(task);
       this.showSuccessToast();

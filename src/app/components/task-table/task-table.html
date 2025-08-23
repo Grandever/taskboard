@@ -239,7 +239,12 @@
               </div>
             </td>
             <td class="status-column">
-              <span [ngClass]="getPriorityBadgeClass(task.priority)">{{ task.priority }}</span>
+              <div class="priority-badge-container">
+                <span class="badge" [ngClass]="getPriorityBadgeClass(task.priority)">
+                  <i class="bi" [ngClass]="getPriorityIcon(task.priority)"></i>
+                  {{ task.priority }}
+                </span>
+              </div>
             </td>
             <td>
               <div class="tags-container">
@@ -296,6 +301,9 @@
                     <div class="mb-2">
                       <strong>Created:</strong> {{ task.created_at | date:'yyyy-MM-dd HH:mm' }}
                     </div>
+                    <div class="mb-2">
+                      <strong>Updated:</strong> {{ task.updated_at | date:'yyyy-MM-dd HH:mm' }}
+                    </div>
                     <div class="mb-2" *ngIf="task.points">
                       <strong>Points:</strong> {{ task.points }}
                     </div>
@@ -331,4 +339,15 @@
     (pageChange)="onPageChange($event)"
     (pageSizeChange)="onPageSizeChange($event)">
   </app-paginator>
+</div>
+
+<!-- Task Detail Modal/Overlay -->
+<div class="task-detail-overlay" *ngIf="showTaskDetail" (click)="closeTaskDetail()">
+  <div class="task-detail-container" (click)="$event.stopPropagation()">
+    <app-task-detail
+      [taskInput]="selectedTask"
+      (close)="closeTaskDetail()"
+      (taskUpdated)="onTaskUpdated($any($event))">
+    </app-task-detail>
+  </div>
 </div>

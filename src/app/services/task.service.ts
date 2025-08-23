@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Task, User } from '../models/task.interfaces';
 import { TaskStatus, TaskPriority } from '../models/task.enums';
 import { ToastrService } from 'ngx-toastr';
+import { RecycleBinService } from './recycle-bin.service';
 import { catchError, tap } from 'rxjs/operators';
 
 const TASKS_KEY = 'taskboard/v1/tasks';
@@ -23,6 +24,7 @@ export class TaskService {
 
   private http = inject(HttpClient);
   private toastr = inject(ToastrService);
+  private recycleBinService = inject(RecycleBinService);
 
   constructor() {
     // Initial loading holatini false qilamiz, chunki localStorage dan ma'lumotlar mavjud
@@ -90,25 +92,33 @@ export class TaskService {
   deleteTask(taskId: string): Observable<string> {
     const currentTasks = this.tasksSubject.value;
     const taskToDelete = currentTasks.find(t => t.id === taskId);
-    const newTasks = currentTasks.filter(task => task.id !== taskId);
-    
-    this.tasksSubject.next(newTasks);
-    this.saveTasksToStorage(newTasks);
     
     if (taskToDelete) {
-      this.toastr.success(`Task "${taskToDelete.title}" deleted successfully`, 'Task Deleted');
+      // Remove from current tasks
+      const newTasks = currentTasks.filter(task => task.id !== taskId);
+      this.tasksSubject.next(newTasks);
+      this.saveTasksToStorage(newTasks);
+      
+      // Add to recycle bin for undo functionality
+      this.recycleBinService.addToRecycleBin(taskToDelete).subscribe();
     }
+    
     return of(taskId);
   }
 
   bulkDeleteTasks(taskIds: string[]): Observable<string[]> {
     const currentTasks = this.tasksSubject.value;
+    const tasksToDelete = currentTasks.filter(task => taskIds.includes(task.id));
     const newTasks = currentTasks.filter(task => !taskIds.includes(task.id));
     
     this.tasksSubject.next(newTasks);
     this.saveTasksToStorage(newTasks);
     
-    this.toastr.success(`${taskIds.length} tasks deleted successfully`, 'Bulk Delete');
+    // Add each deleted task to recycle bin for undo functionality
+    tasksToDelete.forEach(task => {
+      this.recycleBinService.addToRecycleBin(task).subscribe();
+    });
+    
     return of(taskIds);
   }
 

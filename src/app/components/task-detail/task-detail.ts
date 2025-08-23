@@ -29,6 +29,7 @@ export class TaskDetail implements OnInit {
   @Output() close = new EventEmitter<void>();
   @Output() prev = new EventEmitter<void>();
   @Output() next = new EventEmitter<void>();
+  @Output() taskUpdated = new EventEmitter<Task>();
   taskId!: string | null;
   taskDetails: Task | null = null;
 
@@ -311,6 +312,43 @@ export class TaskDetail implements OnInit {
     this.editingDueDateValue = '';
   }
 
+  isTaskOverdue(dueDate: string, status: string): boolean {
+    if (!dueDate || status === 'finished') return false;
+    const due = new Date(dueDate);
+    const now = new Date();
+    return due < now;
+  }
+
+  getPriorityBadgeClass(priority: string): string {
+    switch (priority) {
+      case 'urgent':
+        return 'priority-urgent';
+      case 'high':
+        return 'priority-high';
+      case 'medium':
+        return 'priority-medium';
+      case 'low':
+        return 'priority-low';
+      default:
+        return 'priority-default';
+    }
+  }
+
+  getPriorityIcon(priority: string): string {
+    switch (priority) {
+      case 'urgent':
+        return 'bi-exclamation-triangle-fill';
+      case 'high':
+        return 'bi-arrow-up-circle-fill';
+      case 'medium':
+        return 'bi-dash-circle-fill';
+      case 'low':
+        return 'bi-arrow-down-circle-fill';
+      default:
+        return 'bi-circle-fill';
+    }
+  }
+
   private updateTaskInStorage(updatedTask: Task): void {
     const storedTasks = localStorage.getItem('taskboard/v1/tasks');
     if (storedTasks) {
@@ -320,6 +358,8 @@ export class TaskDetail implements OnInit {
         tasks[taskIndex] = updatedTask;
         localStorage.setItem('taskboard/v1/tasks', JSON.stringify(tasks));
         this.taskDetails = updatedTask;
+        // Emit the updated task for parent components
+        this.taskUpdated.emit(updatedTask);
       }
     }
   }

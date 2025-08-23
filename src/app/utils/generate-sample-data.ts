@@ -1,5 +1,5 @@
 // Utility to generate sample task data for localStorage
-import { Task, User } from '../models/task.interfaces';
+import { Task, User, UserRole, UserStatus } from '../models/task.interfaces';
 import { TaskStatus, TaskPriority } from '../models/task.enums';
 
 export interface SampleDataGenerator {
@@ -91,6 +91,7 @@ export class TaskDataGenerator implements SampleDataGenerator {
     const users: User[] = [];
     const firstNames = ['John', 'Jane', 'Mike', 'Sarah', 'David', 'Lisa', 'Tom', 'Emma', 'Alex', 'Maria', 'Chris', 'Anna', 'Paul', 'Sophie', 'Mark', 'Laura', 'James', 'Rachel', 'Daniel', 'Emily'];
     const lastNames = ['Smith', 'Johnson', 'Williams', 'Brown', 'Jones', 'Garcia', 'Miller', 'Davis', 'Rodriguez', 'Martinez', 'Hernandez', 'Lopez', 'Gonzalez', 'Wilson', 'Anderson', 'Thomas', 'Taylor', 'Moore', 'Jackson', 'Martin'];
+    const now = new Date().toISOString();
     
     for (let i = 0; i < count; i++) {
       const user: User = {
@@ -98,7 +99,12 @@ export class TaskDataGenerator implements SampleDataGenerator {
         username: `user${i + 1}`,
         firstName: firstNames[i % firstNames.length],
         lastName: lastNames[i % lastNames.length],
-        avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=user${i + 1}`
+        email: `user${i + 1}@example.com`,
+        avatarUrl: `https://api.dicebear.com/7.x/identicon/svg?seed=user${i + 1}`,
+        role: UserRole.DEVELOPER,
+        status: UserStatus.ACTIVE,
+        created_at: now,
+        updated_at: now
       };
       
       users.push(user);

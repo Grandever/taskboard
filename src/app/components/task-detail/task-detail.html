@@ -49,11 +49,15 @@
             <span class="detail-label">Priority:</span>
             <span class="detail-value">
               <ng-container *ngIf="!editingPriority; else priorityEdit">
-                <i class="fas fa-equals text-warning me-1"></i>
-                {{ taskDetails.priority | titlecase }}
-                <button class="btn btn-sm btn-link p-0 ms-2" (click)="startEditPriority()">
-                  <i class="fas fa-edit"></i>
-                </button>
+                <div class="priority-badge-detail">
+                  <span class="badge" [ngClass]="getPriorityBadgeClass(taskDetails.priority)">
+                    <i class="bi" [ngClass]="getPriorityIcon(taskDetails.priority)"></i>
+                    {{ taskDetails.priority | titlecase }}
+                  </span>
+                  <button class="btn btn-sm btn-link p-0 ms-2" (click)="startEditPriority()">
+                    <i class="bi bi-pencil"></i>
+                  </button>
+                </div>
               </ng-container>
               <ng-template #priorityEdit>
                 <select class="form-select form-select-sm" [(ngModel)]="editingPriorityValue" style="width: auto;">
@@ -201,14 +205,26 @@
       <div class="row">
         <div class="col-md-6">
           <div class="detail-item mb-2">
-            <span class="detail-label">Target end:</span>
-            <span class="detail-value text-muted">None</span>
+            <span class="detail-label">Due Date:</span>
+            <span class="detail-value" *ngIf="taskDetails.due_date; else noDueDate">
+              {{ taskDetails.due_date | date:'dd/MMM/yy' }}
+              <span class="text-danger ms-2" *ngIf="isTaskOverdue(taskDetails.due_date, taskDetails.status)">
+                <i class="fas fa-exclamation-triangle"></i> Overdue
+              </span>
+            </span>
+            <ng-template #noDueDate>
+              <span class="text-muted">No due date</span>
+            </ng-template>
+          </div>
+          <div class="detail-item mb-2">
+            <span class="detail-label">Created:</span>
+            <span class="detail-value">{{ taskDetails.created_at | date:'dd/MMM/yy h:mm a' }}</span>
           </div>
         </div>
         <div class="col-md-6">
           <div class="detail-item mb-2">
-            <span class="detail-label">Created:</span>
-            <span class="detail-value">{{ taskDetails.created_at | date:'dd/MMM/yy h:mm a' }}</span>
+            <span class="detail-label">Last Updated:</span>
+            <span class="detail-value">{{ taskDetails.updated_at | date:'dd/MMM/yy h:mm a' }}</span>
           </div>
         </div>
       </div>

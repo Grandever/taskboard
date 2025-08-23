@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { map, debounceTime, distinctUntilChanged, switchMap, startWith } from 'rxjs/operators';
-import { User } from '../models/task.interfaces';
+import { User, UserRole, UserStatus } from '../models/task.interfaces';
 
 export interface AssigneeSuggestion {
   user: User;
@@ -306,12 +306,13 @@ export class AssigneeSuggestService {
 
   private loadUsers(): void {
     // In a real app, this would load from a service
+    const now = new Date().toISOString();
     const mockUsers: User[] = [
-      { id: 'user1', firstName: 'John', lastName: 'Doe', username: 'johndoe', avatarUrl: '' },
-      { id: 'user2', firstName: 'Jane', lastName: 'Smith', username: 'janesmith', avatarUrl: '' },
-      { id: 'user3', firstName: 'Bob', lastName: 'Johnson', username: 'bobjohnson', avatarUrl: '' },
-      { id: 'user4', firstName: 'Alice', lastName: 'Brown', username: 'alicebrown', avatarUrl: '' },
-      { id: 'user5', firstName: 'Charlie', lastName: 'Wilson', username: 'charliewilson', avatarUrl: '' }
+      { id: 'user1', firstName: 'John', lastName: 'Doe', username: 'johndoe', email: 'john@example.com', avatarUrl: '', role: UserRole.DEVELOPER, status: UserStatus.ACTIVE, created_at: now, updated_at: now },
+      { id: 'user2', firstName: 'Jane', lastName: 'Smith', username: 'janesmith', email: 'jane@example.com', avatarUrl: '', role: UserRole.DEVELOPER, status: UserStatus.ACTIVE, created_at: now, updated_at: now },
+      { id: 'user3', firstName: 'Bob', lastName: 'Johnson', username: 'bobjohnson', email: 'bob@example.com', avatarUrl: '', role: UserRole.DEVELOPER, status: UserStatus.ACTIVE, created_at: now, updated_at: now },
+      { id: 'user4', firstName: 'Alice', lastName: 'Brown', username: 'alicebrown', email: 'alice@example.com', avatarUrl: '', role: UserRole.DEVELOPER, status: UserStatus.ACTIVE, created_at: now, updated_at: now },
+      { id: 'user5', firstName: 'Charlie', lastName: 'Wilson', username: 'charliewilson', email: 'charlie@example.com', avatarUrl: '', role: UserRole.DEVELOPER, status: UserStatus.ACTIVE, created_at: now, updated_at: now }
     ];
     
     this.usersSubject.next(mockUsers);

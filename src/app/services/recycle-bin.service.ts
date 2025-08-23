@@ -1,212 +1,141 @@
 import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, timer } from 'rxjs';
-import { map, takeUntil } from 'rxjs/operators';
 import { Task } from '../models/task.interfaces';
-import { safeGetItem, safeSetItem } from '../utils/storage.utils';
 
-export interface RecycleItem {
-  id: string;
+export interface DeletedTask {
   task: Task;
   deletedAt: Date;
-  deletedBy?: string;
-  undoAvailable: boolean;
-  undoTimer?: number;
+  timer: any;
 }
-
-const RECYCLE_BIN_KEY = 'taskboard:v1:recycle-bin';
-const MAX_RECYCLE_ITEMS = 100;
-const UNDO_TIMEOUT = 5000; // 5 seconds
 
 @Injectable({
   providedIn: 'root'
 })
 export class RecycleBinService {
-  private recycleBinSubject = new BehaviorSubject<RecycleItem[]>([]);
-  public recycleBin$ = this.recycleBinSubject.asObservable();
+  private deletedTasksSubject = new BehaviorSubject<DeletedTask[]>([]);
+  public deletedTasks$ = this.deletedTasksSubject.asObservable();
 
-  constructor() {
-    this.loadRecycleBin();
-  }
+  private readonly UNDO_WINDOW_MS = 5000; // 5 seconds
 
-  /**
-   * Move task to recycle bin
-   */
-  moveToRecycleBin(task: Task, deletedBy?: string): void {
-    const recycleItem: RecycleItem = {
-      id: task.id,
-      task: { ...task },
-      deletedAt: new Date(),
-      deletedBy,
-      undoAvailable: true,
-      undoTimer: UNDO_TIMEOUT
-    };
-
-    const currentBin = this.recycleBinSubject.value;
-    
-    // Remove if already exists
-    const filteredBin = currentBin.filter(item => item.id !== task.id);
-    
-    // Add new item
-    const newBin = [recycleItem, ...filteredBin];
-    
-    // Limit size
-    if (newBin.length > MAX_RECYCLE_ITEMS) {
-      newBin.splice(MAX_RECYCLE_ITEMS);
-    }
-
-    this.recycleBinSubject.next(newBin);
-    this.saveRecycleBin(newBin);
-
-    // Start undo timer
-    this.startUndoTimer(recycleItem.id);
-  }
+  constructor() {}
 
   /**
-   * Restore task from recycle bin
+   * Add a task to the recycle bin with a 5-second undo window
    */
-  restoreTask(taskId: string): Task | null {
-    const currentBin = this.recycleBinSubject.value;
-    const itemIndex = currentBin.findIndex(item => item.id === taskId);
-    
-    if (itemIndex === -1) return null;
+  addToRecycleBin(task: Task): Observable<boolean> {
+    return new Observable(observer => {
+      const deletedTask: DeletedTask = {
+        task,
+        deletedAt: new Date(),
+        timer: null
+      };
 
-    const item = currentBin[itemIndex];
-    const restoredTask = { ...item.task };
+      // Add to deleted tasks list
+      const currentDeletedTasks = this.deletedTasksSubject.value;
+      this.deletedTasksSubject.next([...currentDeletedTasks, deletedTask]);
 
-    // Remove from recycle bin
-    currentBin.splice(itemIndex, 1);
-    this.recycleBinSubject.next(currentBin);
-    this.saveRecycleBin(currentBin);
+      // Set timer to permanently delete after 5 seconds
+      deletedTask.timer = setTimeout(() => {
+        this.permanentlyDelete(task.id);
+      }, this.UNDO_WINDOW_MS);
 
-    return restoredTask;
-  }
-
-  /**
-   * Permanently delete task from recycle bin
-   */
-  permanentlyDelete(taskId: string): boolean {
-    const currentBin = this.recycleBinSubject.value;
-    const itemIndex = currentBin.findIndex(item => item.id === taskId);
-    
-    if (itemIndex === -1) return false;
-
-    currentBin.splice(itemIndex, 1);
-    this.recycleBinSubject.next(currentBin);
-    this.saveRecycleBin(currentBin);
-
-    return true;
-  }
-
-  /**
-   * Clear entire recycle bin
-   */
-  clearRecycleBin(): void {
-    this.recycleBinSubject.next([]);
-    this.saveRecycleBin([]);
-  }
-
-  /**
-   * Get recycle bin items
-   */
-  getRecycleBinItems(): RecycleItem[] {
-    return this.recycleBinSubject.value;
-  }
-
-  /**
-   * Get recycle bin count
-   */
-  getRecycleBinCount(): number {
-    return this.recycleBinSubject.value.length;
-  }
-
-  /**
-   * Check if task is in recycle bin
-   */
-  isTaskInRecycleBin(taskId: string): boolean {
-    return this.recycleBinSubject.value.some(item => item.id === taskId);
-  }
-
-  /**
-   * Get undo available items
-   */
-  getUndoAvailableItems(): RecycleItem[] {
-    return this.recycleBinSubject.value.filter(item => item.undoAvailable);
-  }
-
-  /**
-   * Start undo timer for an item
-   */
-  private startUndoTimer(taskId: string): void {
-    timer(UNDO_TIMEOUT).subscribe(() => {
-      const currentBin = this.recycleBinSubject.value;
-      const itemIndex = currentBin.findIndex(item => item.id === taskId);
-      
-      if (itemIndex !== -1) {
-        currentBin[itemIndex].undoAvailable = false;
-        currentBin[itemIndex].undoTimer = 0;
-        this.recycleBinSubject.next([...currentBin]);
-        this.saveRecycleBin(currentBin);
-      }
+      observer.next(true);
+      observer.complete();
     });
   }
 
   /**
-   * Extend undo timer for an item
+   * Restore a task from the recycle bin
    */
-  extendUndoTimer(taskId: string, additionalTime: number = UNDO_TIMEOUT): void {
-    const currentBin = this.recycleBinSubject.value;
-    const itemIndex = currentBin.findIndex(item => item.id === taskId);
-    
-    if (itemIndex !== -1) {
-      currentBin[itemIndex].undoAvailable = true;
-      currentBin[itemIndex].undoTimer = additionalTime;
-      this.recycleBinSubject.next([...currentBin]);
-      this.saveRecycleBin(currentBin);
-      
-      // Restart timer
-      this.startUndoTimer(taskId);
-    }
-  }
+  restoreTask(taskId: string): Observable<Task | null> {
+    return new Observable(observer => {
+      const currentDeletedTasks = this.deletedTasksSubject.value;
+      const deletedTaskIndex = currentDeletedTasks.findIndex(dt => dt.task.id === taskId);
 
-  /**
-   * Get remaining undo time for an item
-   */
-  getRemainingUndoTime(taskId: string): number {
-    const item = this.recycleBinSubject.value.find(item => item.id === taskId);
-    return item?.undoTimer || 0;
-  }
-
-  /**
-   * Export recycle bin to JSON
-   */
-  exportRecycleBin(): string {
-    const recycleBin = this.getRecycleBinItems();
-    return JSON.stringify(recycleBin, null, 2);
-  }
-
-  /**
-   * Import recycle bin from JSON
-   */
-  importRecycleBin(jsonString: string): boolean {
-    try {
-      const imported = JSON.parse(jsonString);
-      if (Array.isArray(imported)) {
-        // Validate structure
-        const isValid = imported.every(item => 
-          item.id && item.task && item.deletedAt
-        );
+      if (deletedTaskIndex !== -1) {
+        const deletedTask = currentDeletedTasks[deletedTaskIndex];
         
-        if (isValid) {
-          this.recycleBinSubject.next(imported);
-          this.saveRecycleBin(imported);
-          return true;
+        // Clear the timer
+        if (deletedTask.timer) {
+          clearTimeout(deletedTask.timer);
         }
+
+        // Remove from deleted tasks
+        const updatedDeletedTasks = currentDeletedTasks.filter(dt => dt.task.id !== taskId);
+        this.deletedTasksSubject.next(updatedDeletedTasks);
+
+        observer.next(deletedTask.task);
+      } else {
+        observer.next(null);
       }
-      return false;
-    } catch (error) {
-      console.error('Failed to import recycle bin:', error);
-      return false;
-    }
+      
+      observer.complete();
+    });
+  }
+
+  /**
+   * Permanently delete a task from the recycle bin
+   */
+  private permanentlyDelete(taskId: string): void {
+    const currentDeletedTasks = this.deletedTasksSubject.value;
+    const updatedDeletedTasks = currentDeletedTasks.filter(dt => dt.task.id !== taskId);
+    this.deletedTasksSubject.next(updatedDeletedTasks);
+  }
+
+  /**
+   * Get all currently deleted tasks
+   */
+  getDeletedTasks(): DeletedTask[] {
+    return this.deletedTasksSubject.value;
+  }
+
+  /**
+   * Check if a task is in the recycle bin
+   */
+  isTaskDeleted(taskId: string): boolean {
+    return this.deletedTasksSubject.value.some(dt => dt.task.id === taskId);
+  }
+
+  /**
+   * Get remaining time for undo (in milliseconds)
+   */
+  getRemainingTime(taskId: string): number {
+    const deletedTask = this.deletedTasksSubject.value.find(dt => dt.task.id === taskId);
+    if (!deletedTask) return 0;
+
+    const elapsed = Date.now() - deletedTask.deletedAt.getTime();
+    return Math.max(0, this.UNDO_WINDOW_MS - elapsed);
+  }
+
+  /**
+   * Clear all deleted tasks
+   */
+  clearAll(): void {
+    const currentDeletedTasks = this.deletedTasksSubject.value;
+    
+    // Clear all timers
+    currentDeletedTasks.forEach(dt => {
+      if (dt.timer) {
+        clearTimeout(dt.timer);
+      }
+    });
+
+    this.deletedTasksSubject.next([]);
+  }
+
+  /**
+   * Clear recycle bin (alias for clearAll)
+   */
+  clearRecycleBin(): void {
+    this.clearAll();
+  }
+
+  /**
+   * Cleanup old items (compatibility method)
+   */
+  cleanupOldItems(): void {
+    // This method is called for compatibility but not needed in the new implementation
+    // since items are automatically cleaned up after 5 seconds
   }
 
   /**
@@ -219,71 +148,15 @@ export class RecycleBinService {
     oldestItem: Date | null;
     newestItem: Date | null;
   } {
-    const items = this.getRecycleBinItems();
+    const items = this.getDeletedTasks();
     const now = new Date();
     
     return {
       totalItems: items.length,
-      undoAvailable: items.filter(item => item.undoAvailable).length,
-      expiredItems: items.filter(item => !item.undoAvailable).length,
+      undoAvailable: items.length, // All items in new implementation are undo-available
+      expiredItems: 0, // No expired items in new implementation
       oldestItem: items.length > 0 ? new Date(Math.min(...items.map(item => new Date(item.deletedAt).getTime()))) : null,
       newestItem: items.length > 0 ? new Date(Math.max(...items.map(item => new Date(item.deletedAt).getTime()))) : null
     };
-  }
-
-  /**
-   * Auto-cleanup expired items
-   */
-  autoCleanup(): void {
-    const currentBin = this.recycleBinSubject.value;
-    const now = new Date();
-    const cutoffTime = new Date(now.getTime() - (24 * 60 * 60 * 1000)); // 24 hours ago
-    
-    const cleanedBin = currentBin.filter(item => {
-      const deletedTime = new Date(item.deletedAt);
-      return deletedTime > cutoffTime || item.undoAvailable;
-    });
-
-    if (cleanedBin.length !== currentBin.length) {
-      this.recycleBinSubject.next(cleanedBin);
-      this.saveRecycleBin(cleanedBin);
-    }
-  }
-
-  /**
-   * Cleanup old items (alias for autoCleanup)
-   */
-  cleanupOldItems(): void {
-    this.autoCleanup();
-  }
-
-  /**
-   * Get deleted tasks observable
-   */
-  get deletedTasks$(): Observable<Task[]> {
-    return this.recycleBin$.pipe(
-      map(items => items.map(item => item.task))
-    );
-  }
-
-  private loadRecycleBin(): void {
-    try {
-      const stored = safeGetItem(RECYCLE_BIN_KEY);
-      if (stored) {
-        const recycleBin = JSON.parse(stored);
-        this.recycleBinSubject.next(recycleBin);
-      }
-    } catch (error) {
-      console.error('Error loading recycle bin:', error);
-      this.recycleBinSubject.next([]);
-    }
-  }
-
-  private saveRecycleBin(recycleBin: RecycleItem[]): void {
-    try {
-      safeSetItem(RECYCLE_BIN_KEY, JSON.stringify(recycleBin));
-    } catch (error) {
-      console.error('Error saving recycle bin:', error);
-    }
   }
 }

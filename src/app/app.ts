@@ -6,6 +6,7 @@ import {TaskBoard} from './components/task-board/task-board';
 import {TaskForm} from './components/task-form/task-form';
 import {RouterLink, RouterOutlet} from '@angular/router';
 import {ThemeToggleComponent} from './components/theme-toggle/theme-toggle';
+import {UndoToastContainerComponent} from './components/undo-toast-container/undo-toast-container';
 import {
   AppSettingsService,
   RecycleBinService,
@@ -18,7 +19,7 @@ import { ThemeService } from './services/theme.service';
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule, ThemeToggleComponent, RouterLinkActive],
+  imports: [TaskBoard, TaskForm, RouterOutlet, RouterLink, FormsModule, ThemeToggleComponent, RouterLinkActive, UndoToastContainerComponent],
   templateUrl: './app.html',
   styleUrl: './app.css'
 })

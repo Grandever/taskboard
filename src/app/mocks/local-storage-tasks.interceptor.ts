@@ -1,6 +1,6 @@
 import { HttpEvent, HttpHandlerFn, HttpInterceptorFn, HttpRequest, HttpResponse } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
-import { User } from '../models/task.interfaces';
+import { User, UserRole, UserStatus } from '../models/task.interfaces';
 
 const LOCAL_STORAGE_KEY = 'taskboard/v1/tasks';
 
@@ -77,6 +77,7 @@ function generateSeedUsers(): User[] {
     ['Timur', 'Akbarov', 'akbarov'],
   ];
   const styles = ['adventurer', 'identicon', 'thumbs', 'fun-emoji', 'bottts'];
+  const now = new Date().toISOString();
   return names.map((n, i) => {
     const style = styles[Math.floor(Math.random() * styles.length)];
     const seed = `${n[2]}-${Math.floor(Math.random() * 100000)}`;
@@ -86,7 +87,12 @@ function generateSeedUsers(): User[] {
       firstName: n[0],
       lastName: n[1],
       username: n[2],
+      email: `${n[2]}@example.com`,
       avatarUrl,
+      role: UserRole.DEVELOPER,
+      status: UserStatus.ACTIVE,
+      created_at: now,
+      updated_at: now,
     };
   });
 }
