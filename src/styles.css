@@ -132,11 +132,11 @@ button {
 }
 
 .toast-success .toast-progress {
-  background-color: #28a745 !important;
+  background-color: var(--success-500) !important;
 }
 
 .toast-error .toast-progress {
-  background-color: #dc3545 !important;
+  background-color: var(--danger-500) !important;
 }
 
 /* ===== DARK MODE GLOBAL STYLES ===== */
@@ -338,4 +338,149 @@ button {
   box-shadow: var(--shadow-md) !important;
 }
 
+/* ===== BOOTSTRAP DARK MODE OVERRIDES ===== */
 
+/* Bootstrap table dark mode overrides */
+.dark-mode .table {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .table thead th {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-mode .table tbody tr {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-mode .table tbody tr:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+.dark-mode .table tbody td {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+  border-color: var(--table-border) !important;
+}
+
+.dark-mode .table-bordered {
+  border-color: var(--table-border) !important;
+}
+
+.dark-mode .table-bordered th,
+.dark-mode .table-bordered td {
+  border-color: var(--table-border) !important;
+}
+
+/* Bootstrap form controls dark mode */
+.dark-mode .form-control {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.dark-mode .form-control:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-500) !important;
+  color: var(--input-text) !important;
+}
+
+.dark-mode .form-select {
+  background-color: var(--input-bg) !important;
+  border-color: var(--input-border) !important;
+  color: var(--input-text) !important;
+}
+
+.dark-mode .form-select:focus {
+  background-color: var(--input-bg) !important;
+  border-color: var(--primary-500) !important;
+  color: var(--input-text) !important;
+}
+
+/* Bootstrap button dark mode */
+.dark-mode .btn-outline-light {
+  color: var(--text-primary) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .btn-outline-light:hover {
+  background-color: var(--neutral-200) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Bootstrap navbar dark mode */
+.dark-mode .navbar {
+  background-color: var(--header-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .navbar-brand,
+.dark-mode .navbar-nav .nav-link {
+  color: var(--text-primary) !important;
+}
+
+/* Bootstrap card dark mode */
+.dark-mode .card {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Bootstrap dropdown dark mode */
+.dark-mode .dropdown-menu {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .dropdown-item {
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .dropdown-item:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+/* Bootstrap modal dark mode */
+.dark-mode .modal-content {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .modal-header {
+  border-bottom-color: var(--card-border) !important;
+}
+
+.dark-mode .modal-footer {
+  border-top-color: var(--card-border) !important;
+}
+
+/* Bootstrap accordion dark mode */
+.dark-mode .accordion-item {
+  background-color: var(--card-bg) !important;
+  border-color: var(--card-border) !important;
+}
+
+.dark-mode .accordion-button {
+  background-color: var(--card-bg) !important;
+  color: var(--text-primary) !important;
+}
+
+.dark-mode .accordion-button:hover {
+  background-color: var(--neutral-200) !important;
+}
+
+.dark-mode .accordion-button:not(.collapsed) {
+  background-color: var(--primary-50) !important;
+  color: var(--primary-700) !important;
+}
+
+.dark-mode .accordion-body {
+  background-color: var(--neutral-25) !important;
+  color: var(--text-primary) !important;
+}

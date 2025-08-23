@@ -97,6 +97,7 @@ export class TaskTableComponent implements OnInit, OnDestroy {
   // ===== LIFECYCLE =====
 
   ngOnInit() {
+    this.setupDefaultQueryParams();
     this.loadTasks();
     this.loadUsers();
     this.setupRouteParams();
@@ -360,13 +361,26 @@ export class TaskTableComponent implements OnInit, OnDestroy {
 
   onPageChange(page: number) {
     this.currentPage = page;
+    this.updateUrlParams();
     this.applyPagination();
   }
 
   onPageSizeChange(size: number) {
     this.itemsPerPage = size;
     this.currentPage = 1;
+    this.updateUrlParams();
     this.applyPagination();
+  }
+
+  private updateUrlParams(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: this.currentPage,
+        size: this.itemsPerPage
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   // ===== FILTER EVENTS =====
@@ -478,13 +492,37 @@ export class TaskTableComponent implements OnInit, OnDestroy {
 
   // ===== ROUTE & THEME SETUP =====
 
+  private setupDefaultQueryParams() {
+    this.route.data.subscribe(data => {
+      if (data['defaultQueryParams'] && !this.route.snapshot.queryParams['sort']) {
+        this.router.navigate([], {
+          relativeTo: this.route,
+          queryParams: {
+            sort: 'updated_at,desc',
+            page: 1,
+            size: 10
+          },
+          replaceUrl: true
+        });
+      }
+    });
+  }
+
   private setupRouteParams() {
     this.route.queryParams.pipe(takeUntil(this.destroy$)).subscribe((params: Params) => {
+      let shouldUpdate = false;
+      
       if (params['page']) {
         this.currentPage = parseInt(params['page']);
+        shouldUpdate = true;
       }
       if (params['size']) {
         this.itemsPerPage = parseInt(params['size']);
+        shouldUpdate = true;
+      }
+      
+      if (shouldUpdate) {
+        this.applyFilterSortAndPaginate();
       }
     });
   }

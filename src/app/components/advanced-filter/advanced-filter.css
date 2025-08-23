@@ -181,17 +181,17 @@
 
 /* Form Controls */
 .form-control:focus {
-  border-color: #007bff;
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  border-color: var(--primary-500);
+  box-shadow: 0 0 0 0.2rem var(--primary-200);
 }
 
 .form-check-input:checked {
-  background-color: #007bff;
-  border-color: #007bff;
+  background-color: var(--primary-500);
+  border-color: var(--primary-500);
 }
 
 .form-check-input:focus {
-  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+  box-shadow: 0 0 0 0.2rem var(--primary-200);
 }
 
 /* Badges */
@@ -201,7 +201,7 @@
 }
 
 .badge.bg-primary {
-  background-color: #007bff !important;
+  background-color: var(--primary-500) !important;
 }
 
 /* Responsive Design */
@@ -261,19 +261,19 @@
 
 .assignee-filter::-webkit-scrollbar-track,
 .tags-filter::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: var(--neutral-200);
   border-radius: 3px;
 }
 
 .assignee-filter::-webkit-scrollbar-thumb,
 .tags-filter::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
+  background: var(--neutral-400);
   border-radius: 3px;
 }
 
 .assignee-filter::-webkit-scrollbar-thumb:hover,
 .tags-filter::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  background: var(--neutral-500);
 }
 
 /* ===== ENHANCED DARK MODE STYLES ===== */

@@ -1,13 +1,13 @@
 /* WIP Limit Warning */
 .wip-warning {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  border: 2px solid #ffc107;
+  background: linear-gradient(135deg, var(--warning-50) 0%, var(--warning-100) 100%);
+  border: 2px solid var(--warning-500);
   border-radius: var(--border-radius-md);
   padding: 1rem;
   box-shadow: var(--shadow-sm);
   position: relative;
   overflow: hidden;
-  color: #856404;
+  color: var(--warning-700);
 }
 
 .wip-warning::before {
@@ -17,11 +17,11 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, #ffc107, #ff8c00);
+  background: linear-gradient(to bottom, var(--warning-500), var(--warning-600));
 }
 
 .wip-warning .alert-heading {
-  color: #856404;
+  color: var(--warning-700);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   font-weight: var(--font-weight-semibold);
@@ -30,14 +30,14 @@
 }
 
 .wip-warning .alert-body {
-  color: #856404;
+  color: var(--warning-700);
   font-size: 0.875rem;
   line-height: 1.4;
   margin-left: 1.5rem;
 }
 
 .wip-warning i {
-  color: #ffc107;
+  color: var(--warning-500);
   font-size: 1rem;
 }
 
@@ -45,13 +45,13 @@
 
 /* Dark mode WIP warning */
 .dark-mode .wip-warning {
-  background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%) !important;
-  border: 2px solid #ffc107 !important;
+  background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-200) 100%) !important;
+  border: 2px solid var(--warning-500) !important;
   color: var(--text-secondary) !important;
 }
 
 .dark-mode .wip-warning .alert-heading {
-  color: #ffc107 !important;
+  color: var(--warning-500) !important;
 }
 
 .dark-mode .wip-warning .alert-body {
@@ -59,5 +59,5 @@
 }
 
 .dark-mode .wip-warning i {
-  color: #ffc107 !important;
+  color: var(--warning-500) !important;
 }

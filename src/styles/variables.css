@@ -76,12 +76,15 @@
   --font-size-lg: 1.125rem;   /* 18px */
   --font-size-xl: 1.25rem;    /* 20px */
   --font-size-2xl: 1.5rem;    /* 24px */
+  --font-size-3xl: 1.875rem;  /* 30px */
+  --font-size-4xl: 2.25rem;   /* 36px */
 
   --font-weight-light: 300;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
   --font-weight-semibold: 600;
   --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
 
   --line-height-tight: 1.25;
   --line-height-normal: 1.5;
@@ -100,12 +103,10 @@
   --spacing-12: 3rem;     /* 48px */
   --spacing-16: 4rem;     /* 64px */
   --spacing-20: 5rem;     /* 80px */
+  --spacing-24: 6rem;     /* 96px */
 
-  /* ===== BORDERS & RADIUS ===== */
+  /* ===== BORDERS ===== */
   --border-width: 1px;
-  --border-width-2: 2px;
-  --border-width-4: 4px;
-
   --border-radius-sm: 0.25rem;   /* 4px */
   --border-radius: 0.375rem;     /* 6px */
   --border-radius-md: 0.5rem;    /* 8px */
@@ -114,6 +115,7 @@
   --border-radius-full: 9999px;
 
   /* ===== SHADOWS ===== */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
@@ -140,11 +142,44 @@
   --sidebar-width: 280px;
   --header-height: 60px;
   --task-card-min-width: 280px;
+
+  /* ===== LIGHT MODE SPECIFIC ===== */
+  --bg-white: #ffffff;
+  --card-bg: #ffffff;
+  --column-bg: #f4f5f7;
+  --card-border: #dfe1e6;
+  
+  /* Light mode text colors */
+  --text-primary: #172b4d;
+  --text-secondary: #6b778c;
+  --text-muted: #97a0af;
+  
+  /* Light mode background colors */
+  --body-bg: #ffffff;
+  --header-bg: #ffffff;
+  --sidebar-bg: #f4f5f7;
+  
+  /* Light mode form elements */
+  --input-bg: #ffffff;
+  --input-border: #dfe1e6;
+  --input-text: #172b4d;
+  
+  /* Light mode table colors */
+  --table-header-bg: #f4f5f7;
+  --table-row-bg: #ffffff;
+  --table-row-hover: #f4f5f7;
+  --table-border: #dfe1e6;
+  
+  /* Light mode button colors */
+  --btn-primary-bg: #0052cc;
+  --btn-primary-border: #0052cc;
+  --btn-secondary-bg: #f4f5f7;
+  --btn-secondary-border: #dfe1e6;
 }
 
 /* ===== DARK MODE VARIABLES ===== */
 .dark-mode {
-  /* Dark mode color overrides */
+  /* Dark mode color overrides - STANDARDIZED */
   --neutral-25: #0f0f0f;
   --neutral-50: #1a1a1a;
   --neutral-100: #2d2d2d;
@@ -157,50 +192,52 @@
   --neutral-800: #f5f5f5;
   --neutral-900: #fafafa;
   
-  /* Dark mode specific overrides */
+  /* Dark mode specific overrides - STANDARDIZED */
   --bg-white: #1a1a1a;
   --card-bg: #2d2d2d;
   --column-bg: #1a1a1a;
   --card-border: #404040;
   
-  /* Dark mode text colors */
+  /* Dark mode text colors - STANDARDIZED */
   --text-primary: #ffffff;
   --text-secondary: #d4d4d4;
   --text-muted: #a3a3a3;
   
-  /* Dark mode background colors */
+  /* Dark mode background colors - STANDARDIZED */
   --body-bg: #0f0f0f;
   --header-bg: #1a1a1a;
   --sidebar-bg: #1a1a1a;
   
-  /* Dark mode form elements */
+  /* Dark mode form elements - STANDARDIZED */
   --input-bg: #2d2d2d;
   --input-border: #404040;
   --input-text: #ffffff;
   
-  /* Dark mode table colors */
+  /* Dark mode table colors - STANDARDIZED */
   --table-header-bg: #2d2d2d;
   --table-row-bg: #1a1a1a;
   --table-row-hover: #2d2d2d;
   --table-border: #404040;
   
-  /* Dark mode button colors */
+  /* Dark mode button colors - STANDARDIZED */
   --btn-primary-bg: #0052cc;
   --btn-primary-border: #0052cc;
   --btn-secondary-bg: #404040;
   --btn-secondary-border: #525252;
   
-  /* Dark mode shadow adjustments */
+  /* Dark mode shadow adjustments - STANDARDIZED */
+  --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
   --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
   --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
 }
 
 /* System preference fallback */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme]) {
-    /* Dark mode color overrides */
+    /* Dark mode color overrides - STANDARDIZED */
     --neutral-50: #1a1a1a;
     --neutral-100: #2d2d2d;
     --neutral-200: #404040;
@@ -211,5 +248,46 @@
     --neutral-700: #e5e5e5;
     --neutral-800: #f5f5f5;
     --neutral-900: #fafafa;
+    
+    /* Dark mode specific overrides - STANDARDIZED */
+    --bg-white: #1a1a1a;
+    --card-bg: #2d2d2d;
+    --column-bg: #1a1a1a;
+    --card-border: #404040;
+    
+    /* Dark mode text colors - STANDARDIZED */
+    --text-primary: #ffffff;
+    --text-secondary: #d4d4d4;
+    --text-muted: #a3a3a3;
+    
+    /* Dark mode background colors - STANDARDIZED */
+    --body-bg: #0f0f0f;
+    --header-bg: #1a1a1a;
+    --sidebar-bg: #1a1a1a;
+    
+    /* Dark mode form elements - STANDARDIZED */
+    --input-bg: #2d2d2d;
+    --input-border: #404040;
+    --input-text: #ffffff;
+    
+    /* Dark mode table colors - STANDARDIZED */
+    --table-header-bg: #2d2d2d;
+    --table-row-bg: #1a1a1a;
+    --table-row-hover: #2d2d2d;
+    --table-border: #404040;
+    
+    /* Dark mode button colors - STANDARDIZED */
+    --btn-primary-bg: #0052cc;
+    --btn-primary-border: #0052cc;
+    --btn-secondary-bg: #404040;
+    --btn-secondary-border: #525252;
+    
+    /* Dark mode shadow adjustments - STANDARDIZED */
+    --shadow-xs: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4), 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.3);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.3);
   }
 }

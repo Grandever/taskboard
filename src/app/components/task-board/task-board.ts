@@ -101,14 +101,27 @@ export class TaskBoard implements OnInit, OnDestroy {
       }
     });
 
-    // Subscribe to route query params for filtering
+    // Subscribe to route query params for filtering and pagination
     this.route.queryParamMap.pipe(takeUntil(this.destroy$)).subscribe((p) => {
+      // Handle pagination params
+      const page = p.get('page');
+      const size = p.get('size');
+      
+      if (page) {
+        this.currentPage = parseInt(page, 10);
+      }
+      if (size) {
+        this.itemsPerPage = parseInt(size, 10);
+      }
+
+      // Handle filtering
       const title = (p.get('title') || '').toLowerCase();
       if (title) {
         this.tasks = this.taskService.filterTasks({ title });
       } else {
         this.tasks = this.taskService.getCurrentTasks();
       }
+      
       this.applyPagination();
       this.generateColumns();
     });
@@ -174,14 +187,28 @@ export class TaskBoard implements OnInit, OnDestroy {
 
   onPageChange(page: number): void {
     this.currentPage = page;
+    this.updateUrlParams();
     this.applyPagination();
     this.generateColumns();
   }
 
-  onPageSizeChange(): void {
+  onPageSizeChange(size: number): void {
+    this.itemsPerPage = size;
     this.currentPage = 1;
+    this.updateUrlParams();
     this.applyPagination();
     this.generateColumns();
+  }
+
+  private updateUrlParams(): void {
+    this.router.navigate([], {
+      relativeTo: this.route,
+      queryParams: {
+        page: this.currentPage,
+        size: this.itemsPerPage
+      },
+      queryParamsHandling: 'merge'
+    });
   }
 
   // ===== DRAG AND DROP =====

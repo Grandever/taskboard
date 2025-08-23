@@ -34,10 +34,10 @@ export const TASK_STATUS_OPTIONS: TaskStatusOption[] = [
 ];
 
 export const TASK_PRIORITY_OPTIONS: TaskPriorityOption[] = [
-  { value: TaskPriority.LOW, label: 'Low', color: '#36b37e' },
-  { value: TaskPriority.MEDIUM, label: 'Medium', color: '#ffab00' },
-  { value: TaskPriority.HIGH, label: 'High', color: '#ff5630' },
-  { value: TaskPriority.URGENT, label: 'Urgent', color: '#de350b' }
+  { value: TaskPriority.LOW, label: 'Low', color: 'var(--success-500)' },
+  { value: TaskPriority.MEDIUM, label: 'Medium', color: 'var(--warning-500)' },
+  { value: TaskPriority.HIGH, label: 'High', color: 'var(--danger-600)' },
+  { value: TaskPriority.URGENT, label: 'Urgent', color: 'var(--danger-500)' }
 ];
 
 export function getTaskStatusLabel(status: TaskStatus): string {
@@ -57,5 +57,5 @@ export function getTaskStatusIcon(status: TaskStatus): string {
 
 export function getTaskPriorityColor(priority: TaskPriority): string {
   const option = TASK_PRIORITY_OPTIONS.find(opt => opt.value === priority);
-  return option ? option.color : '#6c757d';
+  return option ? option.color : 'var(--neutral-500)';
 }

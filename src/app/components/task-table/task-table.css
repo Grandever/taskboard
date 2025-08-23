@@ -504,7 +504,7 @@
 }
 
 .quick-actions .dropdown-toggle:hover {
-  background-color: rgba(0, 123, 255, 0.1);
+  background-color: var(--primary-50);
   border-radius: 0.25rem;
 }
 
@@ -529,8 +529,8 @@
 
 /* WIP Limit Warning */
 .wip-warning {
-  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
-  border: 2px solid #ffc107;
+  background: linear-gradient(135deg, var(--warning-50) 0%, var(--warning-100) 100%);
+  border: 2px solid var(--warning-500);
   border-radius: var(--border-radius-md);
   padding: 1rem;
   box-shadow: var(--shadow-sm);
@@ -545,11 +545,11 @@
   left: 0;
   width: 4px;
   height: 100%;
-  background: linear-gradient(to bottom, #ffc107, #ff8c00);
+  background: linear-gradient(to bottom, var(--warning-500), var(--warning-600));
 }
 
 .wip-warning .alert-heading {
-  color: #856404;
+  color: var(--warning-700);
   font-size: 0.875rem;
   margin-bottom: 0.5rem;
   font-weight: var(--font-weight-semibold);
@@ -558,14 +558,14 @@
 }
 
 .wip-warning .alert-body {
-  color: #856404;
+  color: var(--warning-700);
   font-size: 0.875rem;
   line-height: 1.4;
   margin-left: 1.5rem;
 }
 
 .wip-warning i {
-  color: #ffc107;
+  color: var(--warning-500);
   font-size: 1rem;
 }
 
@@ -574,8 +574,8 @@
   position: fixed;
   bottom: 1rem;
   right: 1rem;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
+  background: var(--neutral-900);
+  color: var(--text-primary);
   padding: 0.5rem 1rem;
   border-radius: 0.5rem;
   font-size: 0.75rem;
@@ -589,7 +589,7 @@
 }
 
 .keyboard-hints .key {
-  background: rgba(255, 255, 255, 0.2);
+  background: var(--neutral-700);
   padding: 0.125rem 0.25rem;
   border-radius: 0.25rem;
   margin: 0 0.25rem;
@@ -849,13 +849,13 @@ body.dark-mode .bulk-actions-bar .dropdown-item:hover {
 /* Dark mode WIP warning */
 html.dark-mode .wip-warning,
 body.dark-mode .wip-warning {
-  background: linear-gradient(135deg, #2d2d2d 0%, #404040 100%) !important;
-  border: 2px solid #ffc107 !important;
+  background: linear-gradient(135deg, var(--neutral-100) 0%, var(--neutral-200) 100%) !important;
+  border: 2px solid var(--warning-500) !important;
 }
 
 html.dark-mode .wip-warning .alert-heading,
 body.dark-mode .wip-warning .alert-heading {
-  color: #ffc107 !important;
+  color: var(--warning-500) !important;
 }
 
 html.dark-mode .wip-warning .alert-body,
@@ -865,19 +865,19 @@ body.dark-mode .wip-warning .alert-body {
 
 html.dark-mode .wip-warning i,
 body.dark-mode .wip-warning i {
-  color: #ffc107 !important;
+  color: var(--warning-500) !important;
 }
 
 /* Dark mode keyboard hints */
 html.dark-mode .keyboard-hints,
 body.dark-mode .keyboard-hints {
-  background: rgba(0, 0, 0, 0.9) !important;
+  background: var(--neutral-900) !important;
   border: 1px solid var(--card-border) !important;
 }
 
 html.dark-mode .keyboard-hints .key,
 body.dark-mode .keyboard-hints .key {
-  background: rgba(255, 255, 255, 0.3) !important;
+  background: var(--neutral-700) !important;
   color: var(--text-primary) !important;
 }
 
@@ -958,7 +958,7 @@ body.dark-mode .quick-actions .dropdown-toggle {
 
 html.dark-mode .quick-actions .dropdown-toggle:hover,
 body.dark-mode .quick-actions .dropdown-toggle:hover {
-  background-color: rgba(0, 123, 255, 0.2) !important;
+  background-color: var(--primary-50) !important;
   color: var(--primary-400) !important;
 }
 
